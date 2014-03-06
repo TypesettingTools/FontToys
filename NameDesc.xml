@@ -1,0 +1,295 @@
+<?xml version="1.0" encoding="utf-8"?>
+<descriptions>
+    <names maxDigits="2">
+        <name>
+            <id>0</id>
+            <desc>Copyright Notice</desc>
+        </name> 
+        <name>
+            <id>1</id>
+            <desc>Family Name</desc>
+        </name> 
+        <name>
+            <id>2</id>
+            <desc>Subfamily Name</desc>
+        </name> 
+        <name>
+            <id>3</id>
+            <desc>Unique Font Identifier</desc>
+        </name> 
+         <name>
+            <id>4</id>
+            <desc>Full font Name</desc>
+        </name> 
+        <name>
+            <id>5</id>
+            <desc>Version String</desc>
+        </name> 
+         <name>
+            <id>6</id>
+            <desc>Postscript Name</desc>
+        </name> 
+        <name>
+            <id>7</id>
+            <desc>Trademark</desc>
+        </name> 
+        <name>
+            <id>8</id>
+            <desc>Manufacturer Name</desc>
+        </name> 
+        <name>
+            <id>9</id>
+            <desc>Designer</desc>
+        </name> 
+        <name>
+            <id>10</id>
+            <desc>Description</desc>
+        </name> 
+        <name>
+            <id>11</id>
+            <desc>URL Vendor</desc>
+        </name> 
+        <name>
+            <id>12</id>
+            <desc>URL Designer</desc>
+        </name> 
+        <name>
+            <id>13</id>
+            <desc>License Description</desc>
+        </name> 
+        <name>
+            <id>14</id>
+            <desc>License Info URL</desc>
+        </name> 
+         <name>
+            <id>16</id>
+            <desc>Preferred Family</desc>
+        </name> 
+          <name>
+            <id>17</id>
+            <desc>Preferred Subfamily</desc>
+        </name> 
+          <name>
+            <id>18</id>
+            <desc>Compatible Full</desc>
+        </name> 
+        <name>
+            <id>19</id>
+            <desc>Sample Text</desc>
+        </name> 
+        <name>
+            <id>20</id>
+            <desc>PostScript CID findfont name</desc>
+        </name> 
+    </names>
+
+    <platforms maxDigits="1">
+        <platform>
+            <id>0</id>
+            <desc>Unicode</desc>
+        </platform> 
+        <platform>
+            <id>1</id>
+            <desc>Macintosh</desc>
+        </platform> 
+        <platform>
+            <id>2</id>
+            <desc>ISO</desc>
+        </platform> 
+         <platform>
+            <id>3</id>
+            <desc>Microsoft</desc>
+        </platform> 
+         <platform>
+            <id>4</id>
+            <desc>Custom</desc>
+        </platform> 
+    </platforms>
+
+    <encs maxDigits="2">
+        <enc>
+            <platformID>1</platformID>
+            <id>0</id>
+            <desc>Roman</desc>
+        </enc> 
+        <enc>
+            <platformID>1</platformID>
+            <id>1</id>
+            <desc>Japanese</desc>
+        </enc> 
+        <enc>
+            <platformID>1</platformID>
+            <id>2</id>
+            <desc>Chinese (traditional)</desc>
+        </enc> 
+         <enc>
+            <platformID>1</platformID>
+            <id>3</id>
+            <desc>Korean</desc>
+        </enc> 
+         <enc>
+            <platformID>1</platformID>
+            <id>4</id>
+            <desc>Arabic</desc>
+        </enc> 
+    
+        <enc>
+            <platformID>3</platformID>
+            <id>0</id>
+            <desc>Symbol</desc>
+        </enc> 
+        <enc>
+            <platformID>3</platformID>
+            <id>1</id>
+            <desc>Unicode</desc>
+        </enc> 
+        <enc>
+            <platformID>3</platformID>
+            <id>2</id>
+            <desc>ShiftJIS</desc>
+        </enc> 
+         <enc>
+            <platformID>3</platformID>
+            <id>3</id>
+            <desc>Big5</desc>
+        </enc> 
+         <enc>
+            <platformID>3</platformID>
+            <id>4</id>
+            <desc>PRC</desc>
+        </enc>
+         <enc>
+            <platformID>3</platformID>
+            <id>5</id>
+            <desc>Wansung</desc>
+        </enc>   
+         <enc>
+            <platformID>3</platformID>
+            <id>6</id>
+            <desc>Johab</desc>
+        </enc>          
+         <enc>
+            <platformID>3</platformID>
+            <id>10</id>
+            <desc>UCS-4</desc>
+        </enc>           
+    </encs>
+    
+    <langs maxDigits="5">
+        <lang>
+            <platformID>1</platformID>
+            <id>0x0</id>
+            <desc>English</desc>
+        </lang> 
+        <lang>
+            <platformID>1</platformID>
+            <id>0x1</id>
+            <desc>French</desc>
+        </lang> 
+        <lang>
+            <platformID>1</platformID>
+            <id>0x2</id>
+            <desc>German</desc>
+        </lang> 
+         <lang>
+            <platformID>1</platformID>
+            <id>0x3</id>
+            <desc>Italian</desc>
+        </lang> 
+         <lang>
+            <platformID>1</platformID>
+            <id>0x4</id>
+            <desc>Dutch</desc>
+        </lang> 
+        <lang>
+            <platformID>1</platformID>
+            <id>0x5</id>
+            <desc>Swedish</desc>
+        </lang> 
+        <lang>
+            <platformID>1</platformID>
+            <id>0x6</id>
+            <desc>Spanish</desc>
+        </lang> 
+        <lang>
+            <platformID>1</platformID>
+            <id>0x7</id>
+            <desc>Danish</desc>
+        </lang> 
+         <lang>
+            <platformID>1</platformID>
+            <id>0x8</id>
+            <desc>Portuguese</desc>
+        </lang> 
+         <lang>
+            <platformID>1</platformID>
+            <id>0x9</id>
+            <desc>Norwegian</desc>
+        </lang>
+         <lang>
+            <platformID>1</platformID>
+            <id>0x10</id>
+            <desc>Hebrew</desc>
+        </lang>   
+         <lang>
+            <platformID>1</platformID>
+            <id>0x11</id>
+            <desc>Japanese</desc>
+        </lang>          
+         <lang>
+            <platformID>1</platformID>
+            <id>0x12</id>
+            <desc>Arabic</desc>
+        </lang>
+         <lang>
+            <platformID>1</platformID>
+            <id>0x13</id>
+            <desc>Finnish</desc>
+        </lang>
+         <lang>
+            <platformID>1</platformID>
+            <id>0x14</id>
+            <desc>Greek</desc>
+        </lang>
+         <lang>
+            <platformID>1</platformID>
+            <id>0x15</id>
+            <desc>Icelandic</desc>
+        </lang>
+        <lang>
+            <platformID>1</platformID>
+            <id>0x16</id>
+            <desc>Maltese</desc>
+        </lang>
+        <lang>
+            <platformID>1</platformID>
+            <id>0x17</id>
+            <desc>Turkish</desc>
+        </lang>
+        <lang>
+            <platformID>1</platformID>
+            <id>0x18</id>
+            <desc>Yugosalvian</desc>
+        </lang>
+        <lang>
+            <platformID>1</platformID>
+            <id>0x19</id>
+            <desc>Chinese</desc>
+        </lang>
+        <lang>
+            <platformID>1</platformID>
+            <id>0x20</id>
+            <desc>Urdu</desc>
+        </lang>
+        <lang>
+            <platformID>1</platformID>
+            <id>0x21</id>
+            <desc>Hindi</desc>
+        </lang>
+        <lang>
+            <platformID>1</platformID>
+            <id>0x22</id>
+            <desc>Thai</desc>
+        </lang>
+    </langs>
+</descriptions>
