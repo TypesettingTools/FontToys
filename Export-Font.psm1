@@ -57,10 +57,10 @@ Check-CmdInPath ttx.cmd -Name ttx
 $nameCandidates=@(
     $ImpObject.GetNames(6,1,0,0).Name,
     $ImpObject.GetNames(6,3,1,1033).Name,
-    $ImpObject.GetNames(6)[0].Name,
+    ,@($ImpObject.GetNames(6))[0].Name,
     $ImpObject.GetNames(4,1,0,0).Name,
     $ImpObject.GetNames(4,3,1,1033).Name,
-    $ImpObject.GetNames(4)[0].Name,
+    ,@($ImpObject.GetNames(4))[0].Name,
     $ImpObject.Path.BaseName
 )
 foreach($nameCandidate in $nameCandidates)
@@ -84,9 +84,10 @@ if (!(Test-Path -LiteralPath $OutPath -IsValid)) {
     throw "Invalid OutPath: $OutPath"
 }
 
-$ttxFile = Join-Path ([System.IO.Path]::GetDirectoryName($OutPath)) `
+$ttxFile = Join-Path (Resolve-Path ([System.IO.Path]::GetDirectoryName($OutPath))).Path `
            "$([System.IO.Path]::GetFileNameWithoutExtension($OutName)).Export.ttx"
-$ImpObject.XML.Save($ttxFile)
+
+$ImpObject.XML.Save($ttxFile)  
 
 $xmlNoBOM = Get-Content $ttxFile
 [System.IO.File]::WriteAllLines($ttxFile, $xmlNoBOM)
