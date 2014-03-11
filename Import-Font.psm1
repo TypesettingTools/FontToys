@@ -62,7 +62,7 @@ Comma-delimited list of tables to import.
     Available tables: all, cmap, head, hhea, hmtx, maxp, name, OS/2, post, cvt, fpgm, glyf, loca, prep, 
                       CFF, VORG, BASE, GDEF, GPOS, GSUB, JSTF, DSIG, gasp, hdmx, kern, LTSH, PCLT, VDMX,
                       vhea, vmtx
-Defaults to: name, OS/2
+Defaults to: name, OS/2, head
 Alias: -t
 
 .EXAMPLE
@@ -84,7 +84,7 @@ param
 [string]$InFile,
 [Parameter(Mandatory=$false, HelpMessage='Comma-delimited list of tables to import.')]
 [alias("t")]
-[string[]]$Tables = @("name", "OS/2")
+[string[]]$Tables = @("name", "OS/2", "head")
 )
     
     Check-CmdInPath mkvinfo.exe -Name mkvtoolnix
@@ -143,7 +143,7 @@ param
                 $newRecord.SetAttribute('platEncID', $encId)
                 $newRecord.SetAttribute('langID', "0x{0:x}" -f $langId)
                 $newRecord.InnerText = $name
-                $nameRecord = $this.XML.ttFont.name.AppendChild($newRecord)
+                $nameRecord = $this.XML.SelectSingleNode('ttFont/name').AppendChild($newRecord)
             }
         } `
       | Add-Member -Name RemoveNames -PassThru -MemberType ScriptMethod -Value `
@@ -209,6 +209,23 @@ param
             $this.SetName($nameId,1,0,0,$name)
             $this.SetName($nameId,3,1,1033,$name)
         } `
+      | Add-Member -Name SetVersion -PassThru -MemberType ScriptMethod -Value `
+        { 
+            param([Parameter(Mandatory=$false)][int]$version, [Parameter(Mandatory=$false)][int]$revision=0)
+            
+            if(!$version)
+            {
+                $regex = "^(\d+)(?:\.(\d+))?"
+                $matches = select-string -InputObject $this.XML.ttFont.head.fontRevision.value -pattern $regex  | Select -ExpandProperty Matches
+                [int]$version = $matches.Groups[1].Value
+                [int]$revision = $matches.Groups[2].Value
+            } else {
+                $this.XML.ttFont.head.fontRevision.value = "$version.$revision"
+            }
+
+            $verString = "Version {0}.{1}" -f $version,$revision.ToString("000")
+            $this.SetNameAuto(5,$verString)
+        } `
       | Add-Member -Name SetFamily -PassThru -MemberType ScriptMethod -Value `
         { 
             param([string]$familyName, [string]$subFamilyName, [bool]$winCompat=$true)
@@ -246,6 +263,26 @@ param
 
             $this.SetNameAuto(1, $familyName)
             $this.SetNameAuto(2, $subFamilyName)
+
+            $manuCandidates=@(
+                $this.GetNames(8,1,0,0).Name,
+                $this.GetNames(8,3,1,1033).Name,
+                ,@($this.GetNames(8))[0].Name,
+                $this.GetNames(9,1,0,0).Name,
+                $this.GetNames(9,3,1,1033).Name,
+                ,@($this.GetNames(9))[0].Name,
+                "Unknown"  
+            )
+            foreach($manuCandidate in $manuCandidates)
+            {
+                if ($manuCandidate -and $manuCandidate.Trim()) {
+                    $manufacturer = $manuCandidate
+                    break;
+                }
+            }
+
+            $this.SetVersion()
+            $this.SetNameAuto(3,("{0}: {1} (FontToys)" -f $manufacturer,$this.GetNames(4,1,0,0).Name))
         }
 
     return $fontInfo
