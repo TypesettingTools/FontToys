@@ -7,13 +7,13 @@
 <word weight="100" search="1">Thin</word>
 <word weight="100" search="1">UltraLight</word>
 <word weight="200" search="1">ExtraLight</word>
-<word weight="300">Light</word>
+<word weight="300" search="1">Light</word>
 <word weight="400">Book</word>
 <word weight="500" search="1">Medium</word>
 <word weight="600" search="1">SemiBold</word>
 <word weight="600" search="1">DemiBold</word>
 <word weight="800" search="1">ExtraBold</word>
-<word weight="900">Heavy</word>
+<word weight="900" search="1">Heavy</word>
 <word weight="900">Black</word>
 <word weight="900" search="1">UltraBlack</word>
 <word weight="1000">Fat</word>
@@ -37,6 +37,25 @@
 <word fsSelection="8" search="1">Outline</word>
 <word fsSelection="16" search="1">Strikeout</word>
 <word fsSelection="512" search="1">Oblique</word>
+
+<word weight="700" replaceString="Bold" fsSelection="32" search="1">Bld</word>
+<word weight="700" replaceString="Bold" fsSelection="32">Bol</word>
+<word weight="700" replaceString="Bold Oblique" fsSelection="544">BldOblq</word>
+<word weight="900" replaceString="Black">Blk</word>
+<word weight="900" replaceString="Black Oblique" fsSelection="512">BlkOblq</word>
+<word weight="400" replaceString="Book Oblique" fsSelection="512">BookOblq</word>
+<word width="3" replaceString="Compressed">Com</word>
+<word weight="200" replaceString="ExtraLight">ExLt</word>
+<word weight="200" replaceString="ExtraLight Oblique" fsSelection="512">ExLtOblq</word>
+<word replaceString="Italic" fsSelection="1">Ita</word>
+<word weight="300" replaceString="Light">Lt</word>
+<word weight="300" replaceString="Light Oblique" fsSelection="512">LtOblq</word>
+<word weight="500" replaceString="Medium">Med</word>
+<word weight="500" replaceString="Medium Italic" fsSelection="1">MedItal</word>
+<word weight="500" replaceString="Medium Oblique" fsSelection="512">MedOblq</word>
+<word weight="600" replaceString="DemiBold">Demi</word>
+<word width="6" search="1" replaceString="ExtraExpanded">Extra Wide</word>
+
 
 <word weight="700" fsSelection="33" replaceString="Bold Italic">BoldItalic</word>
 <word weight="400" fsSelection="64" width="3" replaceString="Condensed">CondensedRegular</word>
@@ -63,6 +82,30 @@
 <word search="1">Seven</word>
 <word search="1">Eight</word>
 <word search="1">Nine</word>
+<word search="1">No1</word>
+<word search="1">No2</word>
+<word search="1">No3</word>
+<word search="1">No4</word>
+<word search="1">No5</word>
+<word search="1">No6</word>
+<word search="1">No7</word>
+<word search="1">No8</word>
+<word search="1">No9</word>
+<word search="1">No10</word>
+<word search="1">No11</word>
+<word search="1">No12</word>
+<word search="1">No13</word>
+<word search="1">No14</word>
+<word search="1">No15</word>
+<word search="1">No16</word>
+<word search="1">Dot1</word>
+<word search="1">Dot2</word>
+<word search="1">Dot3</word>
+<word search="1">Dot4</word>
+<word search="1">Line1</word>
+<word search="1">Line2</word>
+<word search="1">Line3</word>
+<word search="1">Line4</word>
 <word>A</word>
 <word>B</word>
 <word>C</word>
@@ -71,49 +114,74 @@
 
 <word>3D</word>
 <word>3-D</word>
-<word>Alternate</word>
-<word>Alternates</word>
+<word search="1">Alternate</word>
+<word search="1">Alternates</word>
 <word>Alt</word>
 <word search="1">Background</word>
 <word>Base</word>
+<word search="1">Busted</word>
 <word>Capitals</word>
 <word>Caps</word>
-<word>Clean</word>
+<word search="1">Clean</word>
+<word search="1">Clockwise</word>
 <word>Demo</word>
 <word search="1">Dingbats</word>
-<word>Dings</word>
+<word search="1">Dings</word>
 <word search="1">Dividers</word>
 <word search="1">Dotted</word>
+<word>Dots</word>
+<word>Dotface</word>
+<word>Egyptian</word>
 <word>Extended</word>
+<word search="1">Extreme</word>
+<word>Extra</word>
 <word>Extras</word>
 <word>Extruded</word>
 <word>Fill</word>
 <word>Filled</word>
+<word>Fixed</word>
 <word>Flat</word>
 <word>Half</word>
+<word search="1">Hairline</word>
 <word>Highlight</word>
-<word>Inline</word>
+<word search="1">Inline</word>
+<word search="1">Klein</word>
+<word>LC</word>
+<word>Line</word>
 <word>Lines</word>
+<word>Loose</word>
 <word search="1">Lowercase</word>
+<word search="1" replace="Lowercase">Lower Case</word>
+<word search="1">Mirror</word>
 <word>Mono</word>
 <word>Open</word>
 <word search="1">Ornaments</word>
 <word>Overlay</word>
+<word>Pics</word>
 <word>Plain</word>
 <word>Print</word>
+<word>Ragged</word>
 <word>Rough</word>
 <word>Round</word>
 <word search="1">Rounded</word>
+<word>SC</word>
 <word>Screen</word>
-<word>Shadow</word>
-<word>Swash</word>
 <word>Shade</word>
+<word>Shadow</word>
+<word>Shadowed</word>
 <word>Sketch</word>
 <word>Solid</word>
 <word search="1">Slanted</word>
 <word>Stencil</word>
+<word>Striped</word>
+<word>Stripes</word>
+<word>Strike</word>
+<word>Strike</word>
+<word>Stroke</word>
 <word>Stroked</word>
+<word search="1">Swash</word>
 <word>Textured</word>
+<word>Tight</word>
 <word>Three-D</word>
 <word>Underlay</word>
 <word>Worn</word>
