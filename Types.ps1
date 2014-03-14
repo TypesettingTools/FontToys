@@ -27,7 +27,8 @@ Add-Type -TypeDefinition @"
       SemiBold = 600,
       Bold = 700,
       ExtraBold = 800,
-      Black = 900
+      Black = 900,
+      Fat = 1000
    }
 "@
 
