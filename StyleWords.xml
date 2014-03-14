@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="utf-8"?>
+<styleWords>
+<word weight="400" fsSelection="64" search="1">Regular</word>
+<word weight="400" width="5" fsSelection="64" search="1">Normal</word>
+<word weight="900">Ultra</word>
+<word weight="100" search="1">UltraThin</word>
+<word weight="100" search="1">Thin</word>
+<word weight="100" search="1">UltraLight</word>
+<word weight="200" search="1">ExtraLight</word>
+<word weight="300">Light</word>
+<word weight="400">Book</word>
+<word weight="500" search="1">Medium</word>
+<word weight="600" search="1">SemiBold</word>
+<word weight="600" search="1">DemiBold</word>
+<word weight="800" search="1">ExtraBold</word>
+<word weight="900">Heavy</word>
+<word weight="900">Black</word>
+<word weight="900" search="1">UltraBlack</word>
+<word weight="1000">Fat</word>
+<word weight="1000" search="1">ExtraBlack</word>
+<word weight="700" fsSelection="32" search="1">Bold</word>
+<word width="1" search="1">UltraCondensed</word>
+<word width="2" search="1">ExtraCondensed</word>
+<word width="3" search="1">Condensed</word>
+<word width="3" search="1" >Narrow</word>
+<word width="3">Compressed</word>
+<word width="4" search="1">SemiCondensed</word>
+<word width="6" search="1">SemiExpanded</word>
+<word width="7" search="1">Expanded</word>
+<word width="8" search="1">ExtraExpanded</word>
+<word width="9" search="1">UltraExpanded</word>
+<word fsSelection="1" search="1">Italic</word>
+<word fsSelection="2" search="1">Underscore</word>
+<word fsSelection="4">Negative</word>
+<word fsSelection="8" search="1">Outlined</word>
+<word fsSelection="8">Hollow</word>
+<word fsSelection="8" search="1">Outline</word>
+<word fsSelection="16" search="1">Strikeout</word>
+<word fsSelection="512" search="1">Oblique</word>
+
+<word weight="700" fsSelection="33" replaceString="Bold Italic">BoldItalic</word>
+<word weight="400" fsSelection="64" width="3" replaceString="Condensed">CondensedRegular</word>
+<word weight="400" fsSelection="64" width="7" replaceString="Expanded">ExpandedRegular</word>
+<word weight="500" fsSelection="1" replaceString="Medium Italic">MediumItalic</word>
+<word weight="400" fsSelection="64" width="8" replaceString="UltraExpanded">UltraExpandedRegular</word>
+<word weight="400" fsSelection="64" width="8" replaceString="UltraExpanded">UltraexpandedRegula</word>
+
+<word>1</word>
+<word>2</word>
+<word>3</word>
+<word>4</word>
+<word>5</word>
+<word>6</word>
+<word>7</word>
+<word>8</word>
+<word>9</word>
+<word search="1">One</word>
+<word search="1">Two</word>
+<word search="1">Three</word>
+<word search="1">Four</word>
+<word search="1">Five</word>
+<word search="1">Six</word>
+<word search="1">Seven</word>
+<word search="1">Eight</word>
+<word search="1">Nine</word>
+<word>A</word>
+<word>B</word>
+<word>C</word>
+<word>D</word>
+<word>E</word>
+
+<word>3D</word>
+<word>3-D</word>
+<word>Alternate</word>
+<word>Alternates</word>
+<word>Alt</word>
+<word search="1">Background</word>
+<word>Base</word>
+<word>Capitals</word>
+<word>Caps</word>
+<word>Clean</word>
+<word>Demo</word>
+<word search="1">Dingbats</word>
+<word>Dings</word>
+<word search="1">Dividers</word>
+<word search="1">Dotted</word>
+<word>Extended</word>
+<word>Extras</word>
+<word>Extruded</word>
+<word>Fill</word>
+<word>Filled</word>
+<word>Flat</word>
+<word>Half</word>
+<word>Highlight</word>
+<word>Inline</word>
+<word>Lines</word>
+<word search="1">Lowercase</word>
+<word>Mono</word>
+<word>Open</word>
+<word search="1">Ornaments</word>
+<word>Overlay</word>
+<word>Plain</word>
+<word>Print</word>
+<word>Rough</word>
+<word>Round</word>
+<word search="1">Rounded</word>
+<word>Screen</word>
+<word>Shadow</word>
+<word>Swash</word>
+<word>Shade</word>
+<word>Sketch</word>
+<word>Solid</word>
+<word search="1">Slanted</word>
+<word>Stencil</word>
+<word>Stroked</word>
+<word>Textured</word>
+<word>Three-D</word>
+<word>Underlay</word>
+<word>Worn</word>
+</styleWords>
