@@ -31,7 +31,7 @@ Export-Font $font -f otf -o X:\Fonts
 Writes an OpenType font to the X:\Fonts folder
 
 .LINK
-https://github.com/line0/FontTools
+https://github.com/line0/FontToys
 
 #>
 #requires -version 3
@@ -92,7 +92,7 @@ $ImpObject.XML.Save($ttxFile)
 $xmlNoBOM = Get-Content $ttxFile
 [System.IO.File]::WriteAllLines($ttxFile, $xmlNoBOM)
 
-&ttx -m $ImpObject.Path.FullName -o $OutPath $ttxFile
+&ttx -m $ImpObject.Path.FullName -o $OutPath $ttxFile | Write-Host
 Remove-Item $ttxFile
 
 }
