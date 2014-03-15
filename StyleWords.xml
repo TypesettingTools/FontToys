@@ -1,188 +1,193 @@
 <?xml version="1.0" encoding="utf-8"?>
 <styleWords>
-<word weight="400" fsSelection="64" search="1">Regular</word>
-<word weight="400" width="5" fsSelection="64" search="1">Normal</word>
-<word weight="900">Ultra</word>
-<word weight="100" search="1">UltraThin</word>
-<word weight="100" search="1">Thin</word>
-<word weight="100" search="1">UltraLight</word>
-<word weight="200" search="1">ExtraLight</word>
-<word weight="300" search="1">Light</word>
-<word weight="400">Book</word>
-<word weight="500" search="1">Medium</word>
-<word weight="600" search="1">SemiBold</word>
-<word weight="600" search="1">DemiBold</word>
-<word weight="800" search="1">ExtraBold</word>
-<word weight="900" search="1">Heavy</word>
-<word weight="900">Black</word>
-<word weight="900" search="1">UltraBlack</word>
-<word weight="1000">Fat</word>
-<word weight="1000" search="1">ExtraBlack</word>
-<word weight="700" fsSelection="32" search="1">Bold</word>
-<word width="1" search="1">UltraCondensed</word>
-<word width="2" search="1">ExtraCondensed</word>
-<word width="3" search="1">Condensed</word>
-<word width="3" search="1" >Narrow</word>
-<word width="3">Compressed</word>
-<word width="4" search="1">SemiCondensed</word>
-<word width="6" search="1">SemiExpanded</word>
-<word width="7" search="1">Expanded</word>
-<word width="8" search="1">ExtraExpanded</word>
-<word width="9" search="1">UltraExpanded</word>
-<word fsSelection="1" search="1">Italic</word>
-<word fsSelection="2" search="1">Underscore</word>
-<word fsSelection="4">Negative</word>
-<word fsSelection="8" search="1">Outlined</word>
-<word fsSelection="8">Hollow</word>
-<word fsSelection="8" search="1">Outline</word>
-<word fsSelection="16" search="1">Strikeout</word>
-<word fsSelection="512" search="1">Oblique</word>
+    <!-- keep Regular/Normal styles up here so properties can be overwritten by more specific styles -->
+    <word weight="400" fsSelection="64" separate="1">Regular</word>
+    <word weight="400" width="5" fsSelection="64" separate="1">Normal</word>
 
-<word weight="700" replaceString="Bold" fsSelection="32" search="1">Bld</word>
-<word weight="700" replaceString="Bold" fsSelection="32">Bol</word>
-<word weight="700" replaceString="Bold Oblique" fsSelection="544">BldOblq</word>
-<word weight="900" replaceString="Black">Blk</word>
-<word weight="900" replaceString="Black Oblique" fsSelection="512">BlkOblq</word>
-<word weight="400" replaceString="Book Oblique" fsSelection="512">BookOblq</word>
-<word width="3" replaceString="Compressed">Com</word>
-<word weight="200" replaceString="ExtraLight">ExLt</word>
-<word weight="200" replaceString="ExtraLight Oblique" fsSelection="512">ExLtOblq</word>
-<word replaceString="Italic" fsSelection="1">Ita</word>
-<word weight="300" replaceString="Light">Lt</word>
-<word weight="300" replaceString="Light Oblique" fsSelection="512">LtOblq</word>
-<word weight="500" replaceString="Medium">Med</word>
-<word weight="500" replaceString="Medium Italic" fsSelection="1">MedItal</word>
-<word weight="500" replaceString="Medium Oblique" fsSelection="512">MedOblq</word>
-<word weight="600" replaceString="DemiBold">Demi</word>
-<word width="6" search="1" replaceString="ExtraExpanded">Extra Wide</word>
+    <!-- standard styl names -->
+    <word weight="100" separate="1">UltraThin</word>
+    <word weight="100" separate="1">Thin</word>
+    <word weight="100" separate="1">UltraLight</word>
+    <word weight="200" separate="1">ExtraLight</word>
+    <word weight="300" separate="1">Light</word>
+    <word weight="400" separate="1">Book</word>
+    <word weight="500" separate="1">Medium</word>
+    <word weight="600" separate="1">SemiBold</word>
+    <word weight="600" separate="1">DemiBold</word>
+    <word weight="700" fsSelection="32" match="(?&lt;!Semi|Demi|Extra)Bold">Bold</word>
+    <word weight="800" separate="1">ExtraBold</word>
+    <word weight="900" separate="1">Heavy</word>
+    <word weight="900" match="(?&lt;!Ultra|Extra)Black">Black</word>
+    <word weight="900" match="Ultra(?![B|b]lack)">Ultra</word>
+    <word weight="900" separate="1">UltraBlack</word>
+    <word weight="1000">Fat</word>
+    <word weight="1000" separate="1">ExtraBlack</word>
+    <word width="1" separate="1">UltraCondensed</word>
+    <word width="2" separate="1">ExtraCondensed</word>
+    <word width="3" match="(?&lt;!Ultra|Extra|Semi)Condensed">Condensed</word>
+    <word width="3" separate="1" >Narrow</word>
+    <word width="3">Compressed</word>
+    <word width="4" separate="1">SemiCondensed</word>
+    <word width="6" separate="1">SemiExpanded</word>
+    <word width="7" match="(?&lt;!Ultra|Extra|Semi)Expanded">Expanded</word>
+    <word width="8" separate="1">ExtraExpanded</word>
+    <word width="9" separate="1">UltraExpanded</word>
+    <word fsSelection="1" separate="1">Italic</word>
+    <word fsSelection="2" separate="1">Underscore</word>
+    <word fsSelection="4">Negative</word>
+    <word fsSelection="8" separate="1">Outlined</word>
+    <word fsSelection="8" match="Outline(?!d)">Outline</word>
+    <word fsSelection="8">Hollow</word>
+    <word fsSelection="16" separate="1">Strikeout</word>
+    <word fsSelection="512" separate="1">Oblique</word>
+
+    <!-- stupid abbreviations -->
+    
+    <word weight="200" replaceString="ExtraLight" separate="1">ExLt</word>
+    <word weight="300" replaceString="Light" match="(?&lt;!Ex)Lt">Lt</word>
+    <word weight="500" replaceString="Medium" match="Med(?!ium)">Med</word>
+    <word weight="600" replaceString="DemiBold" match="Demi(?![B|b]old)">Demi</word>
+        <word weight="700" replaceString="Bold" fsSelection="32" match="Bol(?!d)">Bol</word>
+    <word weight="700" replaceString="Bold" fsSelection="32" match="(?&lt;!Ex)Bld">Bld</word>
+    <word weight="900" replaceString="Black" separate="1">Blk</word>
+    <word replaceString="Oblique" fsSelection="512" separate="1">Oblq</word>
+    <word replaceString="Italic" fsSelection="1" match="Ital?(?!ic)">Ita</word>
+    <word width="3" replaceString="Compressed">Com</word>
+    
+    <!-- nonstandard alternates -->
+    <word width="6" separate="1" replaceString="ExtraExpanded">Extra Wide</word>
 
 
-<word weight="700" fsSelection="33" replaceString="Bold Italic">BoldItalic</word>
-<word weight="400" fsSelection="64" width="3" replaceString="Condensed">CondensedRegular</word>
-<word weight="400" fsSelection="64" width="7" replaceString="Expanded">ExpandedRegular</word>
-<word weight="500" fsSelection="1" replaceString="Medium Italic">MediumItalic</word>
-<word weight="400" fsSelection="64" width="8" replaceString="UltraExpanded">UltraExpandedRegular</word>
-<word weight="400" fsSelection="64" width="8" replaceString="UltraExpanded">UltraexpandedRegula</word>
 
-<word>1</word>
-<word>2</word>
-<word>3</word>
-<word>4</word>
-<word>5</word>
-<word>6</word>
-<word>7</word>
-<word>8</word>
-<word>9</word>
-<word search="1">One</word>
-<word search="1">Two</word>
-<word search="1">Three</word>
-<word search="1">Four</word>
-<word search="1">Five</word>
-<word search="1">Six</word>
-<word search="1">Seven</word>
-<word search="1">Eight</word>
-<word search="1">Nine</word>
-<word search="1">No1</word>
-<word search="1">No2</word>
-<word search="1">No3</word>
-<word search="1">No4</word>
-<word search="1">No5</word>
-<word search="1">No6</word>
-<word search="1">No7</word>
-<word search="1">No8</word>
-<word search="1">No9</word>
-<word search="1">No10</word>
-<word search="1">No11</word>
-<word search="1">No12</word>
-<word search="1">No13</word>
-<word search="1">No14</word>
-<word search="1">No15</word>
-<word search="1">No16</word>
-<word search="1">Dot1</word>
-<word search="1">Dot2</word>
-<word search="1">Dot3</word>
-<word search="1">Dot4</word>
-<word search="1">Line1</word>
-<word search="1">Line2</word>
-<word search="1">Line3</word>
-<word search="1">Line4</word>
-<word>A</word>
-<word>B</word>
-<word>C</word>
-<word>D</word>
-<word>E</word>
 
-<word>3D</word>
-<word>3-D</word>
-<word search="1">Alternate</word>
-<word search="1">Alternates</word>
-<word>Alt</word>
-<word search="1">Background</word>
-<word>Base</word>
-<word search="1">Busted</word>
-<word>Capitals</word>
-<word>Caps</word>
-<word search="1">Clean</word>
-<word search="1">Clockwise</word>
-<word>Demo</word>
-<word search="1">Dingbats</word>
-<word search="1">Dings</word>
-<word search="1">Dividers</word>
-<word search="1">Dotted</word>
-<word>Dots</word>
-<word>Dotface</word>
-<word>Egyptian</word>
-<word>Extended</word>
-<word search="1">Extreme</word>
-<word>Extra</word>
-<word>Extras</word>
-<word>Extruded</word>
-<word>Fill</word>
-<word>Filled</word>
-<word>Fixed</word>
-<word>Flat</word>
-<word>Half</word>
-<word search="1">Hairline</word>
-<word>Highlight</word>
-<word search="1">Inline</word>
-<word search="1">Klein</word>
-<word>LC</word>
-<word>Line</word>
-<word>Lines</word>
-<word>Loose</word>
-<word search="1">Lowercase</word>
-<word search="1" replace="Lowercase">Lower Case</word>
-<word search="1">Mirror</word>
-<word>Mono</word>
-<word>Open</word>
-<word search="1">Ornaments</word>
-<word>Overlay</word>
-<word>Pics</word>
-<word>Plain</word>
-<word>Print</word>
-<word>Ragged</word>
-<word>Rough</word>
-<word>Round</word>
-<word search="1">Rounded</word>
-<word>SC</word>
-<word>Screen</word>
-<word>Shade</word>
-<word>Shadow</word>
-<word>Shadowed</word>
-<word>Sketch</word>
-<word>Solid</word>
-<word search="1">Slanted</word>
-<word>Stencil</word>
-<word>Striped</word>
-<word>Stripes</word>
-<word>Strike</word>
-<word>Strike</word>
-<word>Stroke</word>
-<word>Stroked</word>
-<word search="1">Swash</word>
-<word>Textured</word>
-<word>Tight</word>
-<word>Three-D</word>
-<word>Underlay</word>
-<word>Worn</word>
+    <!-- might not need those anymore 
+    <word weight="700" fsSelection="33" replaceString="Bold Italic">BoldItalic</word>
+    <word weight="400" fsSelection="64" width="3" replaceString="Condensed">CondensedRegular</word>
+    <word weight="400" fsSelection="64" width="7" replaceString="Expanded">ExpandedRegular</word>
+    <word weight="500" fsSelection="1" replaceString="Medium Italic">MediumItalic</word>
+    <word weight="400" fsSelection="64" width="8" replaceString="UltraExpanded">UltraExpandedRegular</word>
+    <word weight="400" fsSelection="64" width="8" replaceString="UltraExpanded">UltraexpandedRegula</word>
+    --> 
+
+    <word>1</word>
+    <word>2</word>
+    <word>3</word>
+    <word>4</word>
+    <word>5</word>
+    <word>6</word>
+    <word>7</word>
+    <word>8</word>
+    <word>9</word>
+    <word separate="1">One</word>
+    <word separate="1">Two</word>
+    <word separate="1">Three</word>
+    <word separate="1">Four</word>
+    <word separate="1">Five</word>
+    <word separate="1">Six</word>
+    <word separate="1">Seven</word>
+    <word separate="1">Eight</word>
+    <word separate="1">Nine</word>
+    <word separate="1">No1</word>
+    <word separate="1">No2</word>
+    <word separate="1">No3</word>
+    <word separate="1">No4</word>
+    <word separate="1">No5</word>
+    <word separate="1">No6</word>
+    <word separate="1">No7</word>
+    <word separate="1">No8</word>
+    <word separate="1">No9</word>
+    <word separate="1">No10</word>
+    <word separate="1">No11</word>
+    <word separate="1">No12</word>
+    <word separate="1">No13</word>
+    <word separate="1">No14</word>
+    <word separate="1">No15</word>
+    <word separate="1">No16</word>
+    <word separate="1">Dot1</word>
+    <word separate="1">Dot2</word>
+    <word separate="1">Dot3</word>
+    <word separate="1">Dot4</word>
+    <word separate="1">Line1</word>
+    <word separate="1">Line2</word>
+    <word separate="1">Line3</word>
+    <word separate="1">Line4</word>
+    <word>A</word>
+    <word>B</word>
+    <word>C</word>
+    <word>D</word>
+    <word>E</word>
+
+    <word>3D</word>
+    <word>3-D</word>
+    <word separate="1">Alternate</word>
+    <word separate="1">Alternates</word>
+    <word>Alt</word>
+    <word separate="1">Background</word>
+    <word>Base</word>
+    <word separate="1">Busted</word>
+    <word>Capitals</word>
+    <word>Caps</word>
+    <word separate="1">Clean</word>
+    <word separate="1">Clockwise</word>
+    <word>Demo</word>
+    <word separate="1">Dingbats</word>
+    <word separate="1">Dings</word>
+    <word separate="1">Dividers</word>
+    <word separate="1">Dotted</word>
+    <word>Dots</word>
+    <word>Dotface</word>
+    <word>Egyptian</word>
+    <word>Extended</word>
+    <word separate="1">Extreme</word>
+    <word>Extra</word>
+    <word>Extras</word>
+    <word>Extruded</word>
+    <word>Fill</word>
+    <word>Filled</word>
+    <word>Fixed</word>
+    <word>Flat</word>
+    <word>Half</word>
+    <word separate="1">Hairline</word>
+    <word>Highlight</word>
+    <word separate="1">Inline</word>
+    <word separate="1">Klein</word>
+    <word>LC</word>
+    <word>Line</word>
+    <word>Lines</word>
+    <word>Loose</word>
+    <word separate="1">Lowercase</word>
+    <word separate="1" replace="Lowercase">Lower Case</word>
+    <word separate="1">Mirror</word>
+    <word>Mono</word>
+    <word>Open</word>
+    <word separate="1">Ornaments</word>
+    <word>Overlay</word>
+    <word>Pics</word>
+    <word>Plain</word>
+    <word>Print</word>
+    <word>Ragged</word>
+    <word>Rough</word>
+    <word>Round</word>
+    <word separate="1">Rounded</word>
+    <word>SC</word>
+    <word>Screen</word>
+    <word>Shade</word>
+    <word>Shadow</word>
+    <word>Shadowed</word>
+    <word>Sketch</word>
+    <word>Solid</word>
+    <word separate="1">Slanted</word>
+    <word>Stencil</word>
+    <word>Striped</word>
+    <word>Stripes</word>
+    <word>Strike</word>
+    <word>Strike</word>
+    <word>Stroke</word>
+    <word>Stroked</word>
+    <word separate="1">Swash</word>
+    <word>Textured</word>
+    <word>Tight</word>
+    <word>Three-D</word>
+    <word>Underlay</word>
+    <word>Worn</word>
 </styleWords>

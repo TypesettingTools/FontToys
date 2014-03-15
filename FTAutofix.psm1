@@ -44,7 +44,6 @@ param
 [alias("nt")]
 [int[]]$NameTableEntry=@(4,1,0,0)
 )
-    $nt = $NameTableEntry[0..3] + @(0)*(4-$NameTableEntry[0..3].Count) # pad NameTableEntry array to exactly 4 Ints
     $knownStyleWords = ([xml](Get-Content (Join-Path (Split-Path -parent $PSCommandPath) "StyleWords.xml"))).styleWords.word
 
     try { $fonts = Get-Files $Inputs -match '.[o|t]tf$' -matchDesc 'OpenType/TrueType Font' -acceptFolders -recurse:$Recurse }
@@ -66,12 +65,19 @@ param
 
     $fontList = @()
     $doneCnt = 0
-    foreach($font in $fonts)
-    {
-   
-        $fontList += FixFont(Import-Font -InFile $font)
-        Write-Progress -Activity $readActivity -Id 1 -PercentComplete (100*$fontList.Count/$fonts.Count) -Status "File $($fontList.Count+1)/$($fonts.Count)"
-        Write-Progress -Activity $overallActivity -Id 0 -PercentComplete (50*$fontList.Count/$fonts.Count) -Status "Step 1/2: Reading and fixing fonts"
+
+    $tableView=@(
+        @{label="File"; Expression={ $_.Path.Name}},
+        @{label="Family Name"; Expression={ $_._FamilyName}},
+        @{label="Style Name"; Expression={ $_._StyleName}}
+
+    )
+
+    $fonts | FixFont -nt $NameTableEntry -OutVariable fontList | Format-Table -Property $tableView | %{
+        $_
+        $fntReadCnt = $fontList.Count/$fonts.Count
+        Write-Progress -Activity $readActivity -Id 1 -PercentComplete (100*$fntReadCnt) -Status "File $($fontList.Count+1)/$($fonts.Count): $($fontList[-1].Path.Name)"
+        Write-Progress -Activity $overallActivity -Id 0 -PercentComplete (50*$fntReadCnt) -Status "Step 1/2: Reading and fixing fonts"
     }
 
     $familyList = $fontList | Group-Object -Property _FamilyName
@@ -99,11 +105,22 @@ param
     }
 }
 
-function FixFont($fontData) {
-    $knownStyleWords | ?{$_.search -eq 1} | %{$fontName = $fontData.GetNames($nt[0],$nt[1],$nt[2],$nt[3]).Name}{
-        $fontName = $fontName -creplace "^(.+)(?<!\s)($($_."#text"))(?!\s)",'$1 $2 '
+filter FixFont {
+    [CmdletBinding()]
+    Param(
+    [Parameter(Mandatory=$True, ValueFromPipeline=$true)][System.IO.FileSystemInfo]$_,
+    [Parameter(Mandatory=$True)][int[]]$nt
+    )
+    $nt = $nt[0..3] + @(0)*(4-$nt[0..3].Count) # pad NameTableEntry array to exactly 4 Ints
+    
+    $fontData = Import-Font -InFile $_
+    $knownStyleWords | ?{$_.search -eq 1 -or $_.separate} | %{$fontName = $fontData.GetNames($nt[0],$nt[1],$nt[2],$nt[3]).Name}{
+        $match = if($_.match) {$_.match} else {$_."#text"}
+        $rep = if($_.replaceString) {$_.replaceString} else {$_."#text"}
+        $fontName = $fontName -creplace "^(.+)($match)","`$1_$($rep)_"
+        # $fontName = $fontName -creplace "^(.+)(?<!\s)($match)(?!\s)","`$1_$($rep)_"
     }
-    $fontWords = $fontName.Trim() -replace "-"," " -split "\s+"
+    $fontWords = $fontName.Trim() -replace "-"," " -replace "_"," " -split "\s+"
 
     for ($($i=1;$wordMatch = $false); $i -le $fontWords.Count -and -not $wordMatch; $i++)
     {
@@ -120,7 +137,7 @@ function FixFont($fontData) {
     {
         foreach ($styleWord in $fontWords[$splitIndex..($fontWords.Count-1)]) {
             $knownStyleWords | ?{$_.replaceString} | %{
-                $styleWord = $styleWord -replace $_."#text",$_.replaceString
+                $styleWord = $styleWord -replace "^$($_."#text")`$",$_.replaceString  # should probably turn this into a simple assignment for speed
             }
             $knownStyleWords | ?{$_.'#text' -eq $styleWord} | %{
                 if($_.weight) { $fontData.SetWeight([int]$_.weight) }
