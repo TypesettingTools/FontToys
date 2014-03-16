@@ -39,10 +39,13 @@ param
 [string[]]$Inputs,
 [Parameter(Mandatory=$false, HelpMessage='Recurse subdirectories.')]
 [alias("r")]
-[bool]$Recurse=$false,
+[switch]$Recurse=$false,
 [Parameter(Mandatory=$false, HelpMessage='Name table entry that holds the full font name.')]
 [alias("nt")]
-[int[]]$NameTableEntry=@(4,1,0,0)
+[int[]]$NameTableEntry=@(4,1,0,0),
+[Parameter(Mandatory=$false, HelpMessage='Retrieve the font name from the file name instead of a name table entry.')]
+[alias("f")]
+[switch]$UseFilename=$false
 )
     $knownStyleWords = ([xml](Get-Content (Join-Path (Split-Path -parent $PSCommandPath) "StyleWords.xml"))).styleWords.word
 
@@ -73,7 +76,7 @@ param
 
     )
 
-    $fonts | FixFont -nt $NameTableEntry -OutVariable fontList | Format-Table -Property $tableView | %{
+    $fonts | FixFont -nt $NameTableEntry -useFilename $UseFilename -OutVariable fontList | Format-Table -Property $tableView | %{
         $_
         $fntReadCnt = $fontList.Count/$fonts.Count
         Write-Progress -Activity $readActivity -Id 1 -PercentComplete (100*$fntReadCnt) -Status "File $($fontList.Count+1)/$($fonts.Count): $($fontList[-1].Path.Name)"
@@ -109,24 +112,29 @@ filter FixFont {
     [CmdletBinding()]
     Param(
     [Parameter(Mandatory=$True, ValueFromPipeline=$true)][System.IO.FileSystemInfo]$_,
-    [Parameter(Mandatory=$True)][int[]]$nt
+    [Parameter(Mandatory=$True)][int[]]$nt,
+    [Parameter(Mandatory=$True)][bool[]]$useFilename
     )
     $nt = $nt[0..3] + @(0)*(4-$nt[0..3].Count) # pad NameTableEntry array to exactly 4 Ints
     
     $fontData = Import-Font -InFile $_
-    $knownStyleWords | ?{$_.search -eq 1 -or $_.separate} | %{$fontName = $fontData.GetNames($nt[0],$nt[1],$nt[2],$nt[3]).Name}{
+    $fontName = if($useFilename) {$fontData.Path.BaseName} else {$fontData.GetNames($nt[0],$nt[1],$nt[2],$nt[3]).Name}
+    $knownStyleWords | ?{$_.separate -eq 1 -or $_.match} | %{
         $match = if($_.match) {$_.match} else {$_."#text"}
         $rep = if($_.replaceString) {$_.replaceString} else {$_."#text"}
-        $fontName = $fontName -creplace "^(.+)($match)","`$1_$($rep)_"
-        # $fontName = $fontName -creplace "^(.+)(?<!\s)($match)(?!\s)","`$1_$($rep)_"
+        $fontName = $fontName -creplace "(?<=.)($match)","_$($rep)_"
     }
-    $fontWords = $fontName.Trim() -replace "-"," " -replace "_"," " -split "\s+"
+    $fontWords = @(($fontName.Trim() -replace "-"," " -replace "_"," " -split "\s+") | ?{$_})
 
     for ($($i=1;$wordMatch = $false); $i -le $fontWords.Count -and -not $wordMatch; $i++)
     {
-        $wordMatch = $fontWords[$i] -in $knownStyleWords."#text"+($knownStyleWords | ?{$_ -is [type]"String"})
+        $wordMatch = $fontWords[$i] -in (($knownStyleWords | ?{(!$_.onlyLast -or ($fontWords.Count - $i) -lt ($_.onlyLast+1))})."#text" `
+                                         +($knownStyleWords | ?{$_ -is [type]"String"}) | ?{$_}) 
+                                         # if there are no other properties, $_.#text is resolved into a string
+
         $splitIndex = $i
     }
+    $fontWords[0]=UpperFirst $fontWords[0]
 
     $fontData | Add-Member -Type NoteProperty -Name _FontWords -Value $fontWords
     $fontData | Add-Member -Type NoteProperty -Name _FamilyName -Value ($fontWords[0..($splitIndex-1)] -join " ")
@@ -136,7 +144,7 @@ filter FixFont {
     if($wordMatch)
     {
         foreach ($styleWord in $fontWords[$splitIndex..($fontWords.Count-1)]) {
-            $knownStyleWords | ?{$_.replaceString} | %{
+            $knownStyleWords | ?{$_.replaceString -and $_."#text"} | %{
                 $styleWord = $styleWord -replace "^$($_."#text")`$",$_.replaceString  # should probably turn this into a simple assignment for speed
             }
             $knownStyleWords | ?{$_.'#text' -eq $styleWord} | %{
@@ -144,13 +152,18 @@ filter FixFont {
                 if($_.width) { $fontData.SetWidth([int]$_.width) }
                 if($_.fsSelection) { $fontData.AddFsFlags([int]$_.fsSelection) }
             }
-            $styleWords += $styleWord
+            $styleWords += UpperFirst $styleWord
         }
     }
 
     $fontData | Add-Member -Type NoteProperty -Name _StyleName -Value ($styleWords -join " ")
     $fontData.SetFamily($fontData._FamilyName,$fontData._StyleName)
     return $fontData
+}
+
+function UpperFirst([Parameter(Position=0, Mandatory=$true)][string]$str)
+{
+    return $str.Substring(0,1).ToUpper()+$str.Substring(1)
 }
 
 Export-ModuleMember FTAutofix
