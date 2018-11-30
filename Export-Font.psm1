@@ -52,7 +52,7 @@ param
 [string]$Format="otf"
 )
 
-Check-CmdInPath ttx.cmd -Name ttx
+Check-CmdInPath ttx -Name fonttools
 
 $nameCandidates=@(
     $ImpObject.GetNames(6,1,0,0).Name,
