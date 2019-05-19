@@ -40,9 +40,9 @@ param
 [Parameter(Mandatory=$false, HelpMessage='Recurse subdirectories.')]
 [alias("r")]
 [switch]$Recurse=$false,
-[Parameter(Mandatory=$false, HelpMessage='Name table entry that holds the full font name.')]
+[Parameter(Mandatory=$false, HelpMessage='Name table entries searched for the full font name.')]
 [alias("nt")]
-[int[]]$NameTableEntry=@(4,1,0,0),
+[object[]]$NameTableEntries=(@(4,1,0,0), @(4,3,0,0)),
 [Parameter(Mandatory=$false, HelpMessage='Retrieve the font name from the file name instead of a name table entry.')]
 [alias("f")]
 [switch]$UseFilename=$false,
@@ -79,7 +79,7 @@ param
 
     )
 
-    $fonts | FixFont -nt $NameTableEntry -useFilename $UseFilename -matchPattern $MatchPattern -familyOverride $FamilyOverride -OutVariable fontList `
+    $fonts | FixFont -NameTableEntries $NameTableEntries -useFilename $UseFilename -matchPattern $MatchPattern -familyOverride $FamilyOverride -OutVariable fontList `
            | Format-Table -Property $tableView | %{
         $_
         $fntReadCnt = $fontList.Count/$fonts.Count
@@ -109,18 +109,26 @@ param
         }
         $doneCnt++
     }
-}
+}   
 
 filter FixFont {
     [CmdletBinding()]
     Param(
-    [Parameter(Mandatory=$True, ValueFromPipeline=$true)][System.IO.FileSystemInfo]$_,
-    [int[]]$nt=@(4,1,0,0), [bool]$useFilename=$false, [regex]$matchPattern, [string]$familyOverride
+        [Parameter(Mandatory=$True, ValueFromPipeline=$true)]
+        [System.IO.FileSystemInfo]$_,
+        [object[]]$NameTableEntries=(@(4,1,0,0),@(4,3,0,0)), 
+        [bool]$useFilename=$false, 
+        [regex]$matchPattern, 
+        [string]$familyOverride
     )
-    $nt = $nt[0..3] + @(0)*(4-$nt[0..3].Count) # pad NameTableEntry array to exactly 4 Ints
+
+    $fontData = Import-Font -InFile $_.FullName  
     
-    $fontData = Import-Font -InFile $_.FullName
-    $fontName = if($useFilename) {$fontData.Path.BaseName} else {$fontData.GetNames($nt[0],$nt[1],$nt[2],$nt[3]).Name}
+    $fontName = if($useFilename) {
+        $fontData.Path.BaseName
+    } else {
+        $NameTableEntries | ForEach-Object {$fontData.GetNames($_[0],$_[1],$_[2],$_[3]).Name} | Where-Object {$_ -ne $null} | Select-Object -First 1
+    }
 
     if($matchPattern)
     {
@@ -140,7 +148,8 @@ filter FixFont {
 
         for ($($i=1;$wordMatch = $false); $i -le $fontWords.Count -and -not $wordMatch; $i++)
         {
-            $wordMatch = $fontWords[$i] -in (($knownStyleWords | ?{(!$_.onlyLast -or ($fontWords.Count - $i) -lt ($_.onlyLast+1)) `                                                                   -and (!$_.notFirst -or $i -gt $_.notFirst)})."#text" `
+            $wordMatch = $fontWords[$i] -in (($knownStyleWords | ?{(!$_.onlyLast -or ($fontWords.Count - $i) -lt ($_.onlyLast+1)) `
+                                                                   -and (!$_.notFirst -or $i -gt $_.notFirst)})."#text" `
                                              +($knownStyleWords | ?{$_ -is [type]"String"}) | ?{$_}) 
                                              # if there are no other properties, $_.#text is resolved into a string
 
