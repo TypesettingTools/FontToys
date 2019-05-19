@@ -103,8 +103,16 @@ param
         else {throw $_.Exception}
     }
     $ttxFile = Join-Path $env:temp ($font.BaseName+".Import.ttx")
-    $ttxlog = &ttx $($Tables | %{"-t$_"}) -o $ttxFile $font
-    $xml = [xml](Get-Content -LiteralPath $ttxFile)
+    $ttxlog = &ttx $($Tables | %{"-t$_"}) -o $ttxFile $font 2>&1
+    $ttxFileContent = Get-Content -LiteralPath $ttxFile -Raw
+    try {
+        $xml = [xml]$ttxFileContent
+    } catch {
+        # if the font has characters w/ broken encoding in name tables, ttx copies writes them to the xml verbatim
+        # PS chokes on parsing those invalid characters, so we have to nuke them
+        $xml = [xml]($ttxFileContent -replace "[^\x09\x0A\x0D\u0020-\uD7FF\uE000-\uFFFD\u10000\u10FFFF]", '')
+    }
+    
     Remove-Item $ttxFile
 
     .(Join-Path (Split-Path -parent $PSCommandPath) "Types.ps1")
