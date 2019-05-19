@@ -104,7 +104,7 @@ param
     }
     $ttxFile = Join-Path $env:temp ($font.BaseName+".Import.ttx")
     $ttxlog = &ttx $($Tables | %{"-t$_"}) -o $ttxFile $font
-    $xml = [xml](Get-Content $ttxFile)
+    $xml = [xml](Get-Content -LiteralPath $ttxFile)
     Remove-Item $ttxFile
 
     .(Join-Path (Split-Path -parent $PSCommandPath) "Types.ps1")
