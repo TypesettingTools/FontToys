@@ -16,7 +16,7 @@
     <word weight="300" separate="1">Light</word>
     <word weight="400" separate="1">Book</word>
     <word weight="500" separate="1">Medium</word>
-    <word weight="600" separate="1">SemiBold</word>
+    <word weight="600" separate="1" replaceString="SemiBold" match="Semi[Bb]old">SemiBold</word>
     <word weight="600" separate="1">DemiBold</word>
     <word weight="700" fsSelection="32" match="(?&lt;!Semi|Demi|Extra|X)Bold">Bold</word>
     <word weight="800" separate="1">ExtraBold</word>
@@ -33,8 +33,9 @@
     <word width="3">Compressed</word>
     <word width="4" separate="1">SemiCondensed</word>
     <word width="6" separate="1">SemiExpanded</word>
-    <word width="7" match="(?&lt;!Ultra|Extra|Semi)Expanded">Expanded</word>
+    <word width="7" match="(?&lt;!Ultra|Extra|Semi|Super)Expanded">Expanded</word>
     <word width="8" separate="1">ExtraExpanded</word>
+    <word width="8" separate="1">SuperExpanded</word>
     <word width="9" separate="1">UltraExpanded</word>
     <word fsSelection="1" separate="1">Italic</word>
     <word fsSelection="2" separate="1">Underscore</word>
@@ -59,23 +60,39 @@
 
     <!-- stupid abbreviations -->
     
-    <word weight="200" replaceString="ExtraLight" separate="1">ExLt</word>
-    <word weight="300" replaceString="Light" match="(?&lt;!Ex)Lt">Lt</word>
-    <word weight="500" replaceString="Medium" match="Med(?!ium)">Med</word>
-    <word weight="600" replaceString="DemiBold" match="Demi(?![Bb]old)">Demi</word>
-    <word weight="700" replaceString="Bold" fsSelection="32" match="Bol(?!d)">Bol</word>
-    <word weight="700" replaceString="Bold" fsSelection="32" match="(?&lt;!Ex)Bld">Bld</word>
-    <word weight="900" replaceString="Black" separate="1">Blk</word>
-    <word replaceString="Oblique" fsSelection="512" separate="1">Oblq</word>
-    <word replaceString="Italic" fsSelection="1" match="Ital?(?!l?ic)">Ita</word>
-    <word width="3" replaceString="Compressed">Com</word>
-    <word width="3" replaceString="Condensed" match="Cond(?!ensed)">Cond</word>
+    <word weight="200" replaceString="ExtraLight" separate="1" caseSensitive="1">ExLt</word>
+    <word weight="300" replaceString="Light" match="(?&lt;!Ex)Lt" caseSensitive="1">Lt</word>
+    <word weight="500" replaceString="Medium" match="Med(?!ium)" caseSensitive="1">Med</word>
+    <word weight="600" replaceString="DemiBold" match="Demi(?![Bb]old)" caseSensitive="1">Demi</word>
+    <word weight="700" replaceString="Bold" fsSelection="32" match="Bol(?!d)" caseSensitive="1">Bol</word>
+    <word weight="700" replaceString="Bold" fsSelection="32" match="(?&lt;!Ex)Bld" caseSensitive="1">Bld</word>
+    <word weight="900" replaceString="Black" separate="1" caseSensitive="1">Blk</word>
+    <word replaceString="Oblique" fsSelection="512" separate="1" match="Oblq?(?!ique)" caseSensitive="1">Oblq</word>
+    <word replaceString="Italic" fsSelection="1" match="Ital?(?!l?ic)" caseSensitive="1">Ita</word>
+    <word replaceString="Italic" fsSelection="1" match="It(?!\w)" caseSensitive="1" onlyLast="1">It</word>
+    <word width="3" replaceString="Compressed" caseSensitive="1">Com</word>
+    <word width="3" replaceString="Condensed" match="Cond(?!ensed)" caseSensitive="1">Cond</word>
+    <word width="3" replaceString="Condensed" caseSensitive="1">Cd</word>
+    <word fsSelection="8" replaceString="Outline" caseSensitive="1">Otl</word>
+
+    <!-- more stupid abbreviations with no relation to font metrics -->
+    <word replaceString="Broken" separate="1" caseSensitive="1">Brk</word>
+    <word replaceString="Inkblotted" separate="1">Ikbl</word>
+    <word replaceString="Slanted" separate="1" caseSensitive="1">Slt</word>
+    <word replaceString="SmallCaps" separate="1" caseSensitive="1">Smc</word>
+    <word replaceString="SmallCaps" caseSensitive="1" match="SC(?![\p{Lu}\p{Lt}])">SC</word>
+
+    <!-- acceptable abbreviations -->
+    <word caseSensitive="1">OSF</word> <!-- Old Style Figures -->
+    <word match="P[Rr]([56])(N?)" caseSensitive="1" replaceString="PR$1$2" separate="1">Pr#N</word> <!-- Adobe-Japan1-5/6 w/ JIS version -->
     
     <!-- nonstandard alternates -->
-    <word width="6" separate="1" replaceString="ExtraExpanded">Extra Wide</word>
-    <word weight="800" separate="1" replaceString="ExtraBold">XBold</word>
+    <word width="8" separate="1" replaceString="ExtraExpanded">Extra Wide</word>
+    <word width="7" separate="1" replaceString="Expanded" match="(?&lt;!Extra)Wide">Wide</word>
+    <word weight="800" separate="1" replaceString="ExtraBold" caseSensitive="1">XBold</word>
     <word fsSelection="1" separate="1">Cursive</word>
-    <word match="[Ss](mall)?[\s-_]*[Cc]aps" replaceString="SmallCaps">Small Caps</word>
+    <word match="S(mall)?[\s-_]*[Cc]aps" separate="1" replaceString="SmallCaps" caseSensitive="1">Small Caps</word>
+    <word fsSelection="512" separate="1">Leftleaning</word>
 
 
     <!-- might not need those anymore 
@@ -117,22 +134,22 @@
     <word>No.14</word>
     <word>No.15</word>
     <word>No.16</word>
-    <word separate="1" onlyLast="2">Zero</word>
-    <word separate="1" onlyLast="2">One</word>
-    <word separate="1" onlyLast="2">Two</word>
-    <word separate="1" onlyLast="2">Three</word>
-    <word separate="1" onlyLast="2">Four</word>
-    <word separate="1" onlyLast="2">Five</word>
-    <word separate="1" onlyLast="2">Six</word>
-    <word separate="1" onlyLast="2">Seven</word>
-    <word separate="1" onlyLast="2">Eight</word>
-    <word separate="1" onlyLast="2">Nine</word>
-    <word onlyLast="1">A</word>
-    <word onlyLast="1">B</word>
-    <word onlyLast="1">C</word>
-    <word onlyLast="1">D</word>
-    <word onlyLast="1">E</word>
-    <word onlyLast="1">F</word>
+    <word separate="1" onlyLast="2" caseSensitive="1">Zero</word>
+    <word separate="1" onlyLast="2" caseSensitive="1">One</word>
+    <word separate="1" onlyLast="2" caseSensitive="1">Two</word>
+    <word separate="1" onlyLast="2" caseSensitive="1">Three</word>
+    <word separate="1" onlyLast="2" caseSensitive="1">Four</word>
+    <word separate="1" onlyLast="2" caseSensitive="1">Five</word>
+    <word separate="1" onlyLast="2" caseSensitive="1">Six</word>
+    <word separate="1" onlyLast="2" caseSensitive="1">Seven</word>
+    <word separate="1" onlyLast="2" caseSensitive="1">Eight</word>
+    <word separate="1" onlyLast="2" caseSensitive="1">Nine</word>
+    <word onlyLast="1" caseSensitive="1">A</word>
+    <word onlyLast="1" caseSensitive="1">B</word>
+    <word onlyLast="1" caseSensitive="1">C</word>
+    <word onlyLast="1" caseSensitive="1">D</word>
+    <word onlyLast="1" caseSensitive="1">E</word>
+    <word onlyLast="1" caseSensitive="1">F</word>
     
 
     <word>3D</word>
@@ -158,7 +175,7 @@
     <word onlyLast="1">Concave</word>
     <word onlyLast="2">Cut</word>
     <word>Demo</word>
-    <word separate="1">Dingbats</word>
+    <word separate="1" onlyLast="2">Dingbats</word>
     <word separate="1">Dings</word>
     <word separate="1">Dividers</word>
     <word onlyLast="1">Dirty</word>
@@ -185,6 +202,7 @@
     <word onlyLast="1">Fineline</word>
     <word>Fixed</word>
     <word>Flat</word>
+    <word onlyLast="2">Flourishes</word>
     <word onlyLast="1">Frames</word>
     <word onlyLast="1">Full</word>
     <word>Half</word>
@@ -223,7 +241,6 @@
     <word>Round</word>
     <word separate="1">Rounded</word>
     <word onlyLast="1">Rustic</word>
-    <word>SC</word>
     <word>Schmal</word>
     <word>Screen</word>
     <word>Shade</word>
@@ -235,6 +252,7 @@
     <word>Solid</word>
     <word onlyLast="3">Special</word>
     <word separate="1">Slanted</word>
+    <word separate="1">SmallCaps</word>
     <word>Stencil</word>
     <word>Striped</word>
     <word>Stripes</word>

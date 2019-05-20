@@ -76,7 +76,6 @@ param
         @{label="File"; Expression={ $_.Path.Name}},
         @{label="Family Name"; Expression={ $_._FamilyName}},
         @{label="Style Name"; Expression={ $_._StyleName}}
-
     )
 
     $fonts | FixFont -NameTableEntries $NameTableEntries -useFilename $UseFilename -matchPattern $MatchPattern -familyOverride $FamilyOverride -OutVariable fontList `
@@ -140,38 +139,73 @@ filter FixFont {
         }
     } else {
         $knownStyleWords | ?{$_.separate -eq 1 -or $_.match} | %{
+            # match using "match" tag attribute if specified, otherwise match the element content
             $match = if($_.match) {$_.match} else {$_."#text"}
-            $rep = if($_.replaceString) {$_.replaceString} else {$_."#text"}
-            $fontName = $fontName -creplace "(?<=.)($match)","_$($rep)_"
-        }
-        $fontWords = @(($fontName.Trim() -replace "-"," " -replace "_"," " -split "\s+") | ?{$_})
 
+            # replace using the "replaceString" tag attribute if specified, otherwise the element content
+            $rep = if($_.replaceString) {
+                $_.replaceString
+            } else {$_."#text"}
+
+            $prevFontName = $fontName
+            
+            # Never match the very beginning of the font and don't match partial words
+            # Add separation markers for every match to denote word boundaries
+            # Use "caseSensitive" tag attribute to determine matching mode
+            $fontName = if ($_.caseSensitive -eq 1) {
+                $fontName -creplace "(?<=.)($match)(?!\p{Ll})","_$($rep)_"    
+            } else {
+                $fontName -replace "(?<=.)($match)(?!\p{Ll})","_$($rep)_"
+            }
+            if ($prevFontName -ne $fontName) {
+                Write-Debug "Replaced: $match -> $rep"
+            }
+        }
+        
+        # split font name into words at boundaries denoted by underscores, dashes and spaces
+        $fontWords = @(($fontName.Trim() -replace "-"," " -replace "_"," " -split "\s+") | ?{$_})
+        Write-Debug "Font Words: $($fontWords -join ', ')"
+
+        # determine the boundary between family name and style name using incredibly crude heuristics
         for ($($i=1;$wordMatch = $false); $i -le $fontWords.Count -and -not $wordMatch; $i++)
         {
-            $wordMatch = $fontWords[$i] -in (($knownStyleWords | ?{(!$_.onlyLast -or ($fontWords.Count - $i) -lt ($_.onlyLast+1)) `
-                                                                   -and (!$_.notFirst -or $i -gt $_.notFirst)})."#text" `
-                                             +($knownStyleWords | ?{$_ -is [type]"String"}) | ?{$_}) 
-                                             # if there are no other properties, $_.#text is resolved into a string
+            $applicableStyleWords = ($knownStyleWords | ?{(!$_.onlyLast -or ($fontWords.Count - $i) -le ($_.onlyLast)) `
+                -and (!$_.notFirst -or $i -gt $_.notFirst)})."#text"
+            Write-Debug "Font Word $($i): $($fontWords[$i]); Applicable Style Words: $($applicableStyleWords -join ', ')"
+            $wordMatch = $fontWords[$i] -in ($applicableStyleWords + ($knownStyleWords | ?{$_ -is [type]"String"}) | ?{$_}) # if there are no other properties, $_.#text is resolved into a string
 
-            $splitIndex = $i
+            $firstStyleWordIndex = $i
         }
-        $fontWords[0]=UpperFirst $fontWords[0]
-        $fontData | Add-Member -Type NoteProperty -Name _FontWords -Value $fontWords # only for debugging purposes
+        $fontWords[0] = UpperFirst $fontWords[0] # start font with an uppercase character
 
-        $familyName = $fontWords[0..($splitIndex-1)] -join " "
-        $styleWords = @(if ($wordMatch) { $fontWords[$splitIndex..($fontWords.Count-1)]})
+        # generate the family name, decamelize it and remove it from the style words list
+        $familyName = ($fontWords[0..($firstStyleWordIndex-1)] -join " ") -creplace '(\p{Ll}+)([\p{Lu}\p{Lt}])', '$1 $2'
+        $styleWords = @(if ($wordMatch) { $fontWords[$firstStyleWordIndex..($fontWords.Count-1)]})
+        
+        Write-Debug "Family Name: $familyName"
+        $fontData | Add-Member -Type NoteProperty -Name _FontWords -Value $fontWords # only for debugging purposes
     }
 
+    # perform replacements on stylewords that haven't been processed during the name splitting stage
+    # (i.e. those with neither the 'separate' flag or a 'match' attribute)
+    $nonSeparatingKnownStyleWords = $knownStyleWords | ?{!$_.match -and (!$_.separate -or $_.separate -eq 0) -and $_.replaceString -and $_."#text"}
+    $nonSeparatingKnownStyleWords | %{
+        if ($_.caseSensitive -eq 1) {
+            $styleWords = $styleWords -creplace "^$($_."#text")`$",$_.replaceString  # should probably turn this into a simple assignment for speed
+        } else {
+            $styleWords = $styleWords -replace "^$($_."#text")`$",$_.replaceString 
+        }
+    }
 
     for ($i=0; $i+1 -le $styleWords.Count; $i++) {
-        $knownStyleWords | ?{$_.replaceString -and $_."#text"} | %{
-            $styleWord = $styleWords[$i] -replace "^$($_."#text")`$",$_.replaceString  # should probably turn this into a simple assignment for speed
-        }
+        $styleWord = $styleWords[$i]
+        # import font metrics from style words
         $knownStyleWords | ?{$_.'#text' -eq $styleWord} | %{
             if($_.weight) { $fontData.SetWeight([int]$_.weight) }
             if($_.width) { $fontData.SetWidth([int]$_.width) }
             if($_.fsSelection) { $fontData.AddFsFlags([int]$_.fsSelection) }
         }
+        # TitleCase all style words
         $styleWords[$i] = UpperFirst $styleWord -fixCase
     }
 
