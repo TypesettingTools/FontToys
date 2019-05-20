@@ -175,8 +175,7 @@ param
       | Add-Member -Name GetFsFlags -PassThru -MemberType ScriptMethod -Value `
         { 
             $fsSelInt = [convert]::ToInt32(($this.XML.ttfont.OS_2.fsSelection.value -replace " ",""),2)
-            return [fsSelection]$fsSelInt
-        
+            return [fsSelection]($fsSelInt -band 0x3FF) # bits 10-15 are reserved
         } `
       | Add-Member -Name SetFsFlags -PassThru -MemberType ScriptMethod -Value `
         { 
@@ -203,7 +202,18 @@ param
         } `
       | Add-Member -Name GetWeight -PassThru -MemberType ScriptMethod -Value `
         { 
-            return [usWeightClass][int]$this.XML.ttfont.OS_2.usWeightClass.value        
+            $weight = [int]$this.XML.ttfont.OS_2.usWeightClass.value
+            $weightClass = $weight -as [usWeightClass]
+            if ($weightClass) {return $weightClass;}
+            if ($weight -eq 0) {
+                return [usWeightClass]::Regular
+            }
+            if ($weight -le 9) { # values according to old apple docs
+                return [usWeightClass]($weight * 100)
+            }
+
+            Write-Warning "$($this.Path.BaseName) has non-standard usWeightClass value $weight" 
+            return [usWeightClass]::Regular
         } `
       | Add-Member -Name SetWeight -PassThru -MemberType ScriptMethod -Value `
         { 
@@ -212,7 +222,18 @@ param
         } `
       | Add-Member -Name GetWidth -PassThru -MemberType ScriptMethod -Value `
         { 
-            return [usWidthClass][int]$this.XML.ttfont.OS_2.usWidthClass.value        
+            $width = [int]$this.XML.ttfont.OS_2.usWidthClass.value   
+            $widthClass = $width -as [usWidthClass]
+            if ($widthClass) {return $widthClass;}
+            if ($width -eq 0) {
+                return [usWidthClass]::Normal
+            }
+            if ($width -le 9) { # values according to old apple docs
+                return [usWidthClass]($width* 100)
+            }
+
+            Write-Warning "$($this.Path.BaseName) has non-standard usWidthClass value $width" 
+            return [usWidthClass]::Normal     
         } `
       | Add-Member -Name SetWidth -PassThru -MemberType ScriptMethod -Value `
         { 
