@@ -29,203 +29,221 @@ https://github.com/line0/FontToys
 #>
 #requires -version 3
 
-function FTAutofix
-{
-[CmdletBinding()]
-param
-(
-[Parameter(Position=0, Mandatory=$true, HelpMessage='Comma-delimited list of files and/or Directories to process (can take mixed).')]
-[alias("i")]
-[string[]]$Inputs,
-[Parameter(Mandatory=$false, HelpMessage='Recurse subdirectories.')]
-[alias("r")]
-[switch]$Recurse=$false,
-[Parameter(Mandatory=$false, HelpMessage='Name table entries searched for the full font name.')]
-[alias("nt")]
-[object[]]$NameTableEntries=(@(4,1,0,0), @(4,3,0,0)),
-[Parameter(Mandatory=$false, HelpMessage='Retrieve the font name from the file name instead of a name table entry.')]
-[alias("f")]
-[switch]$UseFilename=$false,
-[Parameter(Mandatory=$false, HelpMessage='Regex pattern to be used for matching family and style name parts.')]
-[alias("p")]
-[regex]$MatchPattern,
-[Parameter(Mandatory=$false, HelpMessage='A single family name that overrides all detected family names.')]
-[alias("fo")]
-[string]$FamilyOverride
-)
-    $knownStyleWords = ([xml](Get-Content (Join-Path (Split-Path -parent $PSCommandPath) "StyleWords.xml"))).styleWords.word
+function FTAutofix {
+  [CmdletBinding()]
+  param
+  (
+    [Parameter(Position = 0, Mandatory = $true, HelpMessage = 'Comma-delimited list of files and/or Directories to process (can take mixed).')]
+    [alias("i")]
+    [string[]]$Inputs,
+    [Parameter(Mandatory = $false, HelpMessage = 'Recurse subdirectories.')]
+    [alias("r")]
+    [switch]$Recurse = $false,
+    [Parameter(Mandatory = $false, HelpMessage = 'Name table entries searched for the full font name.')]
+    [alias("nt")]
+    [object[]]$NameTableEntries = (@(4, 1, 0, 0), @(4, 3, 0, 0)),
+    [Parameter(Mandatory = $false, HelpMessage = 'Retrieve the font name from the file name instead of a name table entry.')]
+    [alias("f")]
+    [switch]$UseFilename = $false,
+    [Parameter(Mandatory = $false, HelpMessage = 'Regex pattern to be used for matching family and style name parts.')]
+    [alias("p")]
+    [regex]$MatchPattern,
+    [Parameter(Mandatory = $false, HelpMessage = 'A single family name that overrides all detected family names.')]
+    [alias("fo")]
+    [string]$FamilyOverride
+  )
+  $knownStyleWords = ([xml](Get-Content (Join-Path (Split-Path -parent $PSCommandPath) "StyleWords.xml"))).styleWords.word
 
-    try { $fonts = Get-Files $Inputs -match '.[o|t]tf$' -matchDesc 'OpenType/TrueType Font' -acceptFolders -recurse:$Recurse }
-    catch
-    {
-        if($_.Exception.WasThrownFromThrowStatement -eq $true)
-        {
-            Write-Host $_.Exception.Message -ForegroundColor Red
-            break
-        }
-        else {throw $_.Exception}
-    }
-
-    $overallActivity = "FontToys Autofix"
-    Write-Progress -Activity $overallActivity -Id 0 -PercentComplete 0 -Status "Step 1/2: Reading and fixing fonts"
-
-    $readActivity = "Reading $($fonts.Count) fonts.."
-    Write-Progress -Activity $readActivity -Id 1 -PercentComplete 0 -Status "Font 1/$($fonts.Count)"
-
-    $tableView=@(
-        @{label="File"; Expression={ $_.Path.Name}; width = 50},
-        @{label="Family Name"; Expression={ $_._FamilyName}; width = 50},
-        @{label="Style Name"; Expression={ $_._StyleName}; width = 32}
-        @{label="Selection Flags"; Expression={ $_.GetFsFlags()}; width = 32}
-        @{label="Weight"; Expression={ $_.GetWeight()}; width = 12}
-        @{label="Width"; Expression={ $_.GetWidth()}; width = 16}
-    )
-
-    $fonts | FixFont -NameTableEntries $NameTableEntries -useFilename $UseFilename -matchPattern $MatchPattern -familyOverride $FamilyOverride -OutVariable fontList `
-           | Format-Table -Property $tableView | %{
-        $_
-        $fntReadCnt = $fontList.Count/$fonts.Count
-        Write-Progress -Activity $readActivity -Id 1 -PercentComplete (100*$fntReadCnt) -Status "File $($fontList.Count+1)/$($fonts.Count): $($fontList[-1].Path.Name)"
-        Write-Progress -Activity $overallActivity -Id 0 -PercentComplete (50*$fntReadCnt) -Status "Step 1/2: Reading and fixing fonts"
-    }
-
-    $familyList = $fontList | Group-Object -Property _FamilyName
-
-    $familyActivity = "Writing $($familyList.Count) families.."
-    Write-Progress -Activity $overallActivity -Id 0 -PercentComplete 50 -Status "Step 2/2: Writing fixed fonts"
-    $doneCnt = 0
-
-    foreach($group in $familyList)
-    {
-        Write-Progress -Activity $familyActivity -Id 1 -PercentComplete (100*$doneCnt/$familyList.Count) -Status $group.Name
-
-        $familyPath = New-Item (Join-Path $group.Group[0].Path.DirectoryName $group.Name) -ItemType Directory -Force
-    
-        $styleActivity = "Writing $($group.Group.Count) styles.."
-        $group.Group | %{$styleDoneCnt=0}{
-            Write-Progress -Activity $styleActivity -Id 2 -PercentComplete (100*$styleDoneCnt/$group.Group.Count) -Status $_.GetNames(2,1,0,0).Name
-            $percentOverall = 50+50*(($doneCnt/$familyList.Count)+1*$styleDoneCnt/($familyList.Count*$group.Group.Count))
-            Write-Progress -Activity $overallActivity -Id 0 -PercentComplete $percentOverall -Status "Step 2/2: Writing fixed fonts"
-            Export-Font $_ -OutPath $familyPath.FullName -Format ttf
-            $styleDoneCnt++
-        }
-        $doneCnt++
-    }
-}   
-
-filter FixFont {
-    [CmdletBinding()]
-    Param(
-        [Parameter(Mandatory=$True, ValueFromPipeline=$true)]
-        [System.IO.FileSystemInfo]$_,
-        [object[]]$NameTableEntries=(@(4,1,0,0),@(4,3,0,0)), 
-        [bool]$useFilename=$false, 
-        [regex]$matchPattern, 
-        [string]$familyOverride
-    )
-
-    $fontData = Import-Font -InFile $_.FullName  
-    
-    $fontName = if($useFilename) {
-        $fontData.Path.BaseName
+  try {
+    $fonts = Get-Files $Inputs -match '.[o|t]tf$' -matchDesc 'OpenType/TrueType Font' -acceptFolders -recurse:$Recurse
+  } catch {
+    if($_.Exception.WasThrownFromThrowStatement -eq $true) {
+      Write-Host $_.Exception.Message -ForegroundColor Red
+      break
     } else {
-        $NameTableEntries | ForEach-Object {$fontData.GetNames($_[0],$_[1],$_[2],$_[3]).Name} | Where-Object {$_ -ne $null} | Select-Object -First 1
+      throw $_.Exception
     }
+  }
 
-    if($matchPattern)
-    {
-        $matches = Select-String -InputObject $fontName -pattern $matchPattern  | Select -ExpandProperty Matches
-        if ($matches.Groups.Count -lt 3) { throw "Your match pattern '$($matchPattern)' didn't produce at least 2 groups." }
-        else {
-            $familyName = $matches.Groups[1].Value
-            $styleWords = @(($matches.Groups[2].Value -replace "_"," " -split "\s+") | ?{$_})
-        }
-    } else {
-        $knownStyleWords | ?{$_.separate -eq 1 -or $_.match} | %{
-            # match using "match" tag attribute if specified, otherwise match the element content
-            $match = if($_.match) {$_.match} else {$_."#text"}
+  $overallActivity = "FontToys Autofix"
+  Write-Progress -Activity $overallActivity -Id 0 -PercentComplete 0 -Status "Step 1/2: Reading and fixing fonts"
 
-            # replace using the "replaceString" tag attribute if specified, otherwise the element content
-            $rep = if($_.replaceString) {
-                $_.replaceString
-            } else {$_."#text"}
+  $readActivity = "Reading $($fonts.Count) fonts.."
+  Write-Progress -Activity $readActivity -Id 1 -PercentComplete 0 -Status "Font 1/$($fonts.Count)"
 
-            $prevFontName = $fontName
-            
-            # Never match the very beginning of the font and don't match partial words
-            # Add separation markers for every match to denote word boundaries
-            # Use "caseSensitive" tag attribute to determine matching mode
-            $fontName = if ($_.caseSensitive -eq 1) {
-                $fontName -creplace "(?<=.)($match)(?!\p{Ll})","_$($rep)_"    
-            } else {
-                $fontName -replace "(?<=.)($match)(?!\p{Ll})","_$($rep)_"
-            }
-            if ($prevFontName -ne $fontName) {
-                Write-Debug "Replaced: $match -> $rep"
-            }
-        }
-        
-        # split font name into words at boundaries denoted by underscores, dashes and spaces
-        $fontWords = @(($fontName.Trim() -replace "-"," " -replace "_"," " -split "\s+") | ?{$_})
-        Write-Debug "Font Words: $($fontWords -join ', ')"
+  $tableView = @(
+    @{label = "File"; Expression = { $_.Path.Name}; width = 50},
+    @{label = "Family Name"; Expression = { $_._FamilyName}; width = 50},
+    @{label = "Style Name"; Expression = { $_._StyleName}; width = 32}
+    @{label = "Selection Flags"; Expression = { $_.GetFsFlags()}; width = 32}
+    @{label = "Weight"; Expression = { $_.GetWeight()}; width = 12}
+    @{label = "Width"; Expression = { $_.GetWidth()}; width = 16}
+  )
 
-        # determine the boundary between family name and style name using incredibly crude heuristics
-        for ($($i=1;$wordMatch = $false); $i -le $fontWords.Count -and -not $wordMatch; $i++)
-        {
-            $applicableStyleWords = ($knownStyleWords | ?{(!$_.onlyLast -or ($fontWords.Count - $i) -le ($_.onlyLast)) `
-                -and (!$_.notFirst -or $i -gt $_.notFirst)})."#text"
-            Write-Debug "Font Word $($i): $($fontWords[$i]); Applicable Style Words: $($applicableStyleWords -join ', ')"
-            $wordMatch = $fontWords[$i] -in ($applicableStyleWords + ($knownStyleWords | ?{$_ -is [type]"String"}) | ?{$_}) # if there are no other properties, $_.#text is resolved into a string
+  $fonts | FixFont -NameTableEntries $NameTableEntries -useFilename $UseFilename -matchPattern $MatchPattern -familyOverride $FamilyOverride -OutVariable fontList |
+  Format-Table -Property $tableView | ForEach-Object {
+    $_
+    $fntReadCnt = $fontList.Count / $fonts.Count
+    Write-Progress -Activity $readActivity -Id 1 -PercentComplete (100 * $fntReadCnt) -Status "File $($fontList.Count+1)/$($fonts.Count): $($fontList[-1].Path.Name)"
+    Write-Progress -Activity $overallActivity -Id 0 -PercentComplete (50 * $fntReadCnt) -Status "Step 1/2: Reading and fixing fonts"
+  }
 
-            $firstStyleWordIndex = $i
-        }
-        $fontWords[0] = UpperFirst $fontWords[0] # start font with an uppercase character
+  $familyList = $fontList | Group-Object -Property _FamilyName
 
-        # generate the family name, decamelize it and remove it from the style words list
-        $familyName = ($fontWords[0..($firstStyleWordIndex-1)] -join " ") -creplace '(\p{Ll}+)([\p{Lu}\p{Lt}])', '$1 $2'
-        $styleWords = @(if ($wordMatch) { $fontWords[$firstStyleWordIndex..($fontWords.Count-1)]})
-        
-        Write-Debug "Family Name: $familyName"
-        $fontData | Add-Member -Type NoteProperty -Name _FontWords -Value $fontWords # only for debugging purposes
+  $familyActivity = "Writing $($familyList.Count) families.."
+  Write-Progress -Activity $overallActivity -Id 0 -PercentComplete 50 -Status "Step 2/2: Writing fixed fonts"
+  $doneCnt = 0
+
+  foreach($group in $familyList) {
+    Write-Progress -Activity $familyActivity -Id 1 -PercentComplete (100 * $doneCnt / $familyList.Count) -Status $group.Name
+
+    $familyPath = New-Item (Join-Path $group.Group[0].Path.DirectoryName $group.Name) -ItemType Directory -Force
+
+    $styleActivity = "Writing $($group.Group.Count) styles.."
+    $group.Group | ForEach-Object {$styleDoneCnt = 0} {
+      Write-Progress -Activity $styleActivity -Id 2 -PercentComplete (100 * $styleDoneCnt / $group.Group.Count) -Status $_.GetNames(2, 1, 0, 0).Name
+      $percentOverall = 50 + 50 * (($doneCnt / $familyList.Count) + 1 * $styleDoneCnt / ($familyList.Count * $group.Group.Count))
+      Write-Progress -Activity $overallActivity -Id 0 -PercentComplete $percentOverall -Status "Step 2/2: Writing fixed fonts"
+      Export-Font $_ -OutPath $familyPath.FullName -Format ttf
+      $styleDoneCnt++
     }
-
-    # perform replacements on stylewords that haven't been processed during the name splitting stage
-    # (i.e. those with neither the 'separate' flag or a 'match' attribute)
-    $nonSeparatingKnownStyleWords = $knownStyleWords | ?{!$_.match -and (!$_.separate -or $_.separate -eq 0) -and $_.replaceString -and $_."#text"}
-    $nonSeparatingKnownStyleWords | %{
-        if ($_.caseSensitive -eq 1) {
-            $styleWords = $styleWords -creplace "^$($_."#text")`$",$_.replaceString  # should probably turn this into a simple assignment for speed
-        } else {
-            $styleWords = $styleWords -replace "^$($_."#text")`$",$_.replaceString 
-        }
-    }
-
-    for ($i=0; $i+1 -le $styleWords.Count; $i++) {
-        $styleWord = $styleWords[$i]
-        # import font metrics from style words
-        $knownStyleWords | ?{$_.'#text' -eq $styleWord} | %{
-            if($_.weight) { $fontData.SetWeight([int]$_.weight) }
-            if($_.width) { $fontData.SetWidth([int]$_.width) }
-            if($_.fsSelection) { $fontData.AddFsFlags([int]$_.fsSelection) }
-        }
-        # TitleCase all style words
-        $styleWords[$i] = UpperFirst $styleWord -fixCase
-    }
-
-    $fontData | Add-Member -Type NoteProperty -Name _StyleName -Value ($styleWords -join " ") -PassThru `
-              | Add-Member -Type NoteProperty -Name _FamilyName -Value $(if ($familyOverride) {$familyOverride} else {$familyName})
-    
-    $fontData.SetFamily($fontData._FamilyName,$fontData._StyleName)
-    return $fontData
+    $doneCnt++
+  }
 }
 
-function UpperFirst([Parameter(Position=0, Mandatory=$true)][string]$str,[switch]$fixCase=$false)
-{
-    if($fixCase -and ($str -ceq $str.ToLower() -or $str -ceq $str.ToUpper()))
-    {
-        return (Get-Culture).TextInfo.ToTitleCase($str) 
-    } 
-    else { return $str.Substring(0,1).ToUpper()+$str.Substring(1) }
+filter FixFont {
+  [CmdletBinding()]
+  Param(
+    [Parameter(Mandatory = $True, ValueFromPipeline = $true)]
+    [System.IO.FileSystemInfo]$_,
+    [object[]]$NameTableEntries = (@(4, 1, 0, 0), @(4, 3, 0, 0)),
+    [bool]$useFilename = $false,
+    [regex]$matchPattern,
+    [string]$familyOverride
+  )
+
+  $fontData = Import-Font -InFile $_.FullName
+
+  $fontName = if($useFilename) {
+    $fontData.Path.BaseName
+  } else {
+    $NameTableEntries | ForEach-Object {$fontData.GetNames($_[0], $_[1], $_[2], $_[3]).Name} | Where-Object {$_ -ne $null} | Select-Object -First 1
+  }
+
+  if($matchPattern) {
+    $matches = Select-String -InputObject $fontName -pattern $matchPattern | Select-Object -ExpandProperty Matches
+    if ($matches.Groups.Count -lt 3) {
+      throw "Your match pattern '$($matchPattern)' didn't produce at least 2 groups."
+    } else {
+      $familyName = $matches.Groups[1].Value
+      $styleWords = @(($matches.Groups[2].Value -replace "_", " " -split "\s+") | Where-Object {$_})
+    }
+  } else {
+    $knownStyleWords | Where-Object {$_.separate -eq 1 -or $_.match} | ForEach-Object {
+      # match using "match" tag attribute if specified, otherwise match the element content
+      $match = if($_.match) {
+        $_.match
+      } else {
+        $_."#text"
+      }
+
+      # replace using the "replaceString" tag attribute if specified, otherwise the element content
+      $rep = if($_.replaceString) {
+        $_.replaceString
+      } else {
+        $_."#text"
+      }
+
+      $prevFontName = $fontName
+
+      # Never match the very beginning of the font and don't match partial words
+      # Add separation markers for every match to denote word boundaries
+      # Use "caseSensitive" tag attribute to determine matching mode
+      $fontName = if ($_.caseSensitive -eq 1) {
+        $fontName -creplace "(?<=.)($match)(?!\p{Ll})", "_$($rep)_"
+      } else {
+        $fontName -replace "(?<=.)($match)(?!\p{Ll})", "_$($rep)_"
+      }
+      if ($prevFontName -ne $fontName) {
+        Write-Debug "Replaced: $match -> $rep"
+      }
+    }
+
+    # split font name into words at boundaries denoted by underscores, dashes and spaces
+    $fontWords = @(($fontName.Trim() -replace "-", " " -replace "_", " " -split "\s+") | Where-Object {$_})
+    Write-Debug "Font Words: $($fontWords -join ', ')"
+
+    # determine the boundary between family name and style name using incredibly crude heuristics
+    for ($($i = 1; $wordMatch = $false); $i -le $fontWords.Count -and -not $wordMatch; $i++) {
+      $applicableStyleWords = ($knownStyleWords | Where-Object {
+          (!$_.onlyLast -or ($fontWords.Count - $i) -le ($_.onlyLast)) -and (!$_.notFirst -or $i -gt $_.notFirst)
+        })."#text"
+      Write-Debug "Font Word $($i): $($fontWords[$i]); Applicable Style Words: $($applicableStyleWords -join ', ')"
+
+      $wordMatch = $fontWords[$i] -in (  # if there are no other properties, $_.#text is resolved into a string
+        $applicableStyleWords + ($knownStyleWords | Where-Object {$_ -is [type]"String"}) | Where-Object {$_}
+      )
+
+      $firstStyleWordIndex = $i
+    }
+    $fontWords[0] = UpperFirst $fontWords[0] # start font with an uppercase character
+
+    # generate the family name, decamelize it and remove it from the style words list
+    $familyName = ($fontWords[0..($firstStyleWordIndex - 1)] -join " ") -creplace '(\p{Ll}+)([\p{Lu}\p{Lt}])', '$1 $2'
+    $styleWords = @(if ($wordMatch) {
+        $fontWords[$firstStyleWordIndex..($fontWords.Count - 1)]
+      })
+
+    Write-Debug "Family Name: $familyName"
+    $fontData | Add-Member -Type NoteProperty -Name _FontWords -Value $fontWords # only for debugging purposes
+  }
+
+  # perform replacements on stylewords that haven't been processed during the name splitting stage
+  # (i.e. those with neither the 'separate' flag or a 'match' attribute)
+  $nonSeparatingKnownStyleWords = $knownStyleWords | Where-Object {!$_.match -and (!$_.separate -or $_.separate -eq 0) -and $_.replaceString -and $_."#text"}
+  $nonSeparatingKnownStyleWords | ForEach-Object {
+    if ($_.caseSensitive -eq 1) {
+      $styleWords = $styleWords -creplace "^$($_."#text")`$", $_.replaceString  # should probably turn this into a simple assignment for speed
+    } else {
+      $styleWords = $styleWords -replace "^$($_."#text")`$", $_.replaceString
+    }
+  }
+
+  for ($i = 0; $i + 1 -le $styleWords.Count; $i++) {
+    $styleWord = $styleWords[$i]
+    # import font metrics from style words
+    $knownStyleWords | Where-Object {$_.'#text' -eq $styleWord} | ForEach-Object {
+      if($_.weight) {
+        $fontData.SetWeight([int]$_.weight)
+      }
+      if($_.width) {
+        $fontData.SetWidth([int]$_.width)
+      }
+      if($_.fsSelection) {
+        $fontData.AddFsFlags([int]$_.fsSelection)
+      }
+    }
+    # TitleCase all style words
+    $styleWords[$i] = UpperFirst $styleWord -fixCase
+  }
+
+  $fontData | Add-Member -Type NoteProperty -Name _StyleName -Value ($styleWords -join " ") -PassThru |
+  Add-Member -Type NoteProperty -Name _FamilyName -Value $(if ($familyOverride) {
+      $familyOverride
+    } else {
+      $familyName
+    })
+
+  $fontData.SetFamily($fontData._FamilyName, $fontData._StyleName)
+  return $fontData
+}
+
+function UpperFirst([Parameter(Position = 0, Mandatory = $true)][string]$str, [switch]$fixCase = $false) {
+  if($fixCase -and ($str -ceq $str.ToLower() -or $str -ceq $str.ToUpper())) {
+    return (Get-Culture).TextInfo.ToTitleCase($str)
+  } else {
+    return $str.Substring(0, 1).ToUpper() + $str.Substring(1)
+  }
 }
 
 Export-ModuleMember FTAutofix
