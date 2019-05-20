@@ -73,9 +73,12 @@ param
     Write-Progress -Activity $readActivity -Id 1 -PercentComplete 0 -Status "Font 1/$($fonts.Count)"
 
     $tableView=@(
-        @{label="File"; Expression={ $_.Path.Name}},
-        @{label="Family Name"; Expression={ $_._FamilyName}},
-        @{label="Style Name"; Expression={ $_._StyleName}}
+        @{label="File"; Expression={ $_.Path.Name}; width = 50},
+        @{label="Family Name"; Expression={ $_._FamilyName}; width = 50},
+        @{label="Style Name"; Expression={ $_._StyleName}; width = 32}
+        @{label="Selection Flags"; Expression={ $_.GetFsFlags()}; width = 32}
+        @{label="Weight"; Expression={ $_.GetWeight()}; width = 12}
+        @{label="Width"; Expression={ $_.GetWidth()}; width = 16}
     )
 
     $fonts | FixFont -NameTableEntries $NameTableEntries -useFilename $UseFilename -matchPattern $MatchPattern -familyOverride $FamilyOverride -OutVariable fontList `
