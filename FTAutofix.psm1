@@ -155,7 +155,7 @@ filter FixFont {
 
     $familyWords = @()
     # filter out any style words that just perform replacements
-    $matchingknownStyleWords = $knownStyleWords | Where-Object {$_."#text" -or $_.match -and -not $_.replace}
+    $matchingknownStyleWords = $knownStyleWords | Where-Object {$_."#text" -or ($_.match -and -not $_.replace)}
 
     # determine the boundary between family name and style name using incredibly crude heuristics
     $firstStyleWordIndex = -1
@@ -278,7 +278,7 @@ function ReplaceStyleWords(
       [Text.RegularExpressions.RegexOptions]::None
     }
     [regex]::Matches($FontName, $match, $regexOptions) | ForEach-Object {
-      if ($ProtectBeginning -and $_.Index -eq 0 -or $FontName[$_.Index + $_.Length] -cmatch "\p{Ll}") {
+      if (($ProtectBeginning -and $_.Index -eq 0) -or $FontName[$_.Index + $_.Length] -cmatch "\p{Ll}") {
         # Protect the very beginning of the font name if configured and don't match partial words
         return;
       }
