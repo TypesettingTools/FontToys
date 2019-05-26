@@ -133,8 +133,9 @@ filter FixFont {
   $fontName = if($useFilename) {
     $fontData.Path.BaseName
   } else {
-    $NameTableEntries | ForEach-Object {$fontData.GetNames($_[0], $_[1], $_[2], $_[3]).Name} | Where-Object {$_ -ne $null} |
-    Sort-Object -Property Length -Descending | Select-Object -First 1
+    ($NameTableEntries | ForEach-Object {$fontData.GetNames($_[0], $_[1], $_[2], $_[3]).Name} | Where-Object {$_ -ne $null} |
+    Sort-Object -Property Length -Descending | Select-Object -First 1 # longest font name is probably of the highest quality
+    ) -replace ':.*','' # sometimes the full font name is suffixed by version like "Aarcover Plain:001.001"
   }
 
   $styleWords = @()
