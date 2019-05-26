@@ -133,7 +133,8 @@ filter FixFont {
   $fontName = if($useFilename) {
     $fontData.Path.BaseName
   } else {
-    $NameTableEntries | ForEach-Object {$fontData.GetNames($_[0], $_[1], $_[2], $_[3]).Name} | Where-Object {$_ -ne $null} | Select-Object -First 1
+    $NameTableEntries | ForEach-Object {$fontData.GetNames($_[0], $_[1], $_[2], $_[3]).Name} | Where-Object {$_ -ne $null} |
+    Sort-Object -Property Length -Descending | Select-Object -First 1
   }
 
   $styleWords = @()
@@ -202,7 +203,7 @@ filter FixFont {
       $isMatch = if ($_.match -and $styleWords -cmatch "^$($_.match)`$") {
         $styleWords = $styleWords -creplace "^$($_.match)`$", $_.'#text' # a bit wasteful doing the matching twice, but style words of this configuration are rare at the time of writing
         $true
-      } elseif (0 -le ($i = [Array]::FindIndex($styleWords, [Predicate[string]]{param($word) $word -eq $_.'#text'}))) {
+      } elseif (0 -le ($i = [Array]::FindIndex($styleWords, [Predicate[string]] {param($word) $word -eq $_.'#text'}))) {
         $styleWords[$i] = $_.'#text'
         $true
       }
