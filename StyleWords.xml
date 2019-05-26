@@ -21,8 +21,8 @@
         <word weight="700" fsSelection="32" match="(?&lt;!Semi|Demi|Extra|X)Bold" separate="1">Bold</word>
         <word weight="800" separate="1">ExtraBold</word>
         <word weight="900" separate="1">Heavy</word>
-        <word weight="900" match="(?&lt;!Ultra|Extra)Black">Black</word>
-        <word weight="900" match="Ultra(?![Bb]lack)">Ultra</word>
+        <word weight="900" separate="1" match="(?&lt;!Ultra|Extra|X)Black">Black</word>
+        <word weight="900" match="Ultra(?![Bb]lack|[Tt]hin|[Ll]ight|[Cc]ondensed|[Ee]xpanded|[Ww]ide)" separate="1">Ultra</word>
         <word weight="900" separate="1">UltraBlack</word>
         <word weight="1000">Fat</word>
         <word weight="1000" separate="1">ExtraBlack</word>
@@ -41,8 +41,9 @@
         <word fsSelection="2" separate="1">Underscore</word>
         <word fsSelection="4">Negative</word>
         <word fsSelection="8" separate="1">Outlined</word>
-        <word fsSelection="8" match="Outline(?!d)">Outline</word>
-        <word fsSelection="8">Hollow</word>
+        <word fsSelection="8" match="Outline(?!d)" separate="1">Outline</word>
+        <word fsSelection="8" match="Hollow(?!ed)">Hollow</word>
+        <word fsSelection="8" separate="1">Hollowed</word>
         <word fsSelection="16" separate="1">Strikeout</word>
         <word fsSelection="512" separate="1">Oblique</word>
 
@@ -75,8 +76,12 @@
         <word replace="Condensed" match="Cd"/>
         <word replace="Outline" match="Otl"/>
         <word match="Reg(?!\w)" replace="Regular"/>
-        <word match="Wd(?!\w)" replace="Wide"/>
+        <word match="(?&lt;!\p{Lu})W[Dd](?!\w)" replace="Wide"/>
+        <word match="(?&lt;!\p{Lu})N[Ww](?!\w)" replace="Narrow"/>
         <word match="Expd" replace="Expanded"/>
+        <!-- <word match="Exp(?!\w)" replace="Expanded"/> --> <!-- unfortunatly Exp is ambiguous between Expanded and Expert -->
+        <word match="T[Hh](?!\w)" replace="Thin"/>
+        <word match="H[Vv][Yy]?(?!\w)" replace="Heavy"/>
 
         <!-- more stupid abbreviations -->
         <word match="Brk" replace="Broken"/>
@@ -86,7 +91,8 @@
         <word match="SC(?![\p{Lu}\p{Lt}])" replace="SmallCaps"/>
 
         <!-- acceptable abbreviations -->
-        <word caseSensitive="1">OSF</word>        <!-- Old Style Figures -->
+        <word caseSensitive="1" separate="1">DFR</word>        <!-- Deutsche Fraktur -->
+        <word caseSensitive="1" match="(O[Ss]F)">$1</word>        <!-- Old Style Figures -->
         <word match="P[Rr]([56])(N?)" replace="PR$2$3">Pr$2$3</word>        <!-- Adobe-Japan1-5/6 w/ JIS version -->
 
         <!-- nonstandard alternates, keep -->
@@ -96,20 +102,13 @@
         <word width="8" match="Extra\w?Wide" replace="ExtraWide">ExtraWide</word>
         <word width="7" separate="1" match="(?&lt;!Extra)Wide">Wide</word>
         <!-- nonstandard alternates, replace -->
-        <word match="XBold" replace="ExtraBold"/>
+        <word match="X[Bb]old" replace="ExtraBold"/>
+        <word match="X[Bb]lack" replace="ExtraBlack"/>
         <word match="S(mall)?[\s-_]*[Cc]aps" replace="SmallCaps"/>
 
-        <word match="(?&lt;=[\s+])\d+(?![D\d\p{P}])" separate="1" onlyLast="1">$1</word>
+        <word match="3-D|Three-D" replace="3D">3D</word>
+        <word match="(?&lt;![\p{Lu}\p{Lt}.,\d])(\d+)(?![Dd.,])" separate="1" onlyLast="1">$1</word>
         <word match="N[oO]\.?(\d+)" replace="No.$2"/>
-        <word onlyLast="1" caseSensitive="1">1</word>
-        <word onlyLast="1" caseSensitive="1">2</word>
-        <word onlyLast="1" caseSensitive="1">3</word>
-        <word onlyLast="1" caseSensitive="1">4</word>
-        <word onlyLast="1" caseSensitive="1">5</word>
-        <word onlyLast="1" caseSensitive="1">6</word>
-        <word onlyLast="1" caseSensitive="1">7</word>
-        <word onlyLast="1" caseSensitive="1">8</word>
-        <word onlyLast="1" caseSensitive="1">9</word>
         <word separate="1" onlyLast="2" caseSensitive="1">Zero</word>
         <word separate="1" onlyLast="2" caseSensitive="1">One</word>
         <word separate="1" onlyLast="2" caseSensitive="1">Two</word>
@@ -120,20 +119,13 @@
         <word separate="1" onlyLast="2" caseSensitive="1">Seven</word>
         <word separate="1" onlyLast="2" caseSensitive="1">Eight</word>
         <word separate="1" onlyLast="2" caseSensitive="1">Nine</word>
-        <word onlyLast="1" caseSensitive="1">A</word>
-        <word onlyLast="1" caseSensitive="1">B</word>
-        <word onlyLast="1" caseSensitive="1">C</word>
-        <word onlyLast="1" caseSensitive="1">D</word>
-        <word onlyLast="1" caseSensitive="1">E</word>
-        <word onlyLast="1" caseSensitive="1">F</word>
 
-
-        <word match="3-D|Three-D" replace="3D">3D</word>
         <word>2D</word>
-        <word match="Alternate(?!s)">Alternate</word>
+        <word match="Alternate(?!s)" separate="1">Alternate</word>
         <word separate="1">Alternates</word>
-        <word>Alt</word>
-        <word onlyLast="1">Arrow</word>
+        <word match="Alt\.?">Alt</word>
+        <word separate="1">Arrows</word>
+        <word separate="1">Arrow</word>
         <word separate="1">Background</word>
         <word>Base</word>
         <word onlyLast="2">Bloated</word>
@@ -172,11 +164,11 @@
         <word>Extra</word>
         <word separate="1">Extras</word>
         <word>Extruded</word>
-        <word onlyLast="1">Faded</word>
+        <word onlyLast="2">Faded</word>
         <word>Fill</word>
         <word>Filled</word>
         <word separate="1" onlyLast="1">Filthy</word>
-        <word onlyLast="1">Fineline</word>
+        <word onlyLast="2">Fineline</word>
         <word>Fixed</word>
         <word>Flat</word>
         <word onlyLast="2">Flourishes</word>
@@ -185,21 +177,23 @@
         <word>Half</word>
         <word separate="1">Hairline</word>
         <word>Highlight</word>
-        <word onlyLast="1">Horizontal</word>
+        <word onlyLast="2">Horizontal</word>
+        <word match="Ini(tials)?" replace="Initials">Initials</word>
         <word separate="1">Inline</word>
         <word onlyLast="1">Jeans</word>
         <word separate="1">Klein</word>
         <word>LC</word>
         <word separate="1">Ligatures</word>
         <word>Line</word>
-        <word>Lines</word>
-        <word>Lined</word>
+        <word separate="1">Lines</word>
+        <word separate="1">Lined</word>
         <word onlyLast="1">Lite</word>
         <word notFirst="2">Loose</word>
         <word match="[Ll]ower\s?[Cc]ase" replace="Lowercase">Lowercase</word>
         <word separate="1">Mirror</word>
         <word>Mono</word>
         <word onlyLast="2">Monochrome</word>
+        <word separate="1">Oldface</word>
         <word separate="1" match="Open(?!\p{Ll}|[Tt]ype)" caseSensitive="1">Open</word>
         <word separate="1">Ornamental</word>
         <word separate="1">Ornaments</word>
@@ -213,15 +207,15 @@
         <word>Ragged</word>
         <word onlyLast="1" separate="1">Ribbons</word>
         <word match="[Ss]uper[\s-_]*[Rr]ough">SuperRough</word>
-        <word onlyLast="1">Roman</word>
         <word>Rough</word>
         <word>Round</word>
         <word separate="1">Rounded</word>
         <word onlyLast="1">Rustic</word>
         <word>Schmal</word>
         <word>Screen</word>
-        <word>Shade</word>
-        <word>Shadow</word>
+        <word match="Shade(?!d)">Shade</word>
+        <word>Shaded</word>
+        <word match="Shadow(?!ed)">Shadow</word>
         <word>Shadowed</word>
         <word onlyLast="1">Simple</word>
         <word onlyLast="1">Slim</word>
@@ -259,12 +253,41 @@
         <word>AOE</word>        <!-- Astigmatic One Eye Foundry -->
         <word>ATF</word>        <!-- American Type Founders -->
         <word>ATT</word>        <!-- Agfa Foundry (TrueType) -->
-        <word>BT</word>        <!-- Bitstream Foundry -->
-        <word>CC</word>        <!-- Carter & Cone / Comicraft Foundries -->
-        <word>CC</word>        <!-- Compugraphic Foundry -->
-        <word>COM</word>        <!-- Linotype Communication Font Line -->
-        <word separate="1">URW</word>        <!-- Linotype Communication Font Line -->
-        <word match="(?&lt;!\p{Lu})OT" caseSensitive="1">OT</word>        <!-- OpenType -->
-        <!-- ITC TT STD-->
+        <word caseSensitive="1">BT</word>        <!-- Bitstream Foundry -->
+        <word caseSensitive="1">CC</word>        <!-- Carter & Cone / Comicraft Foundries -->
+        <word>CG</word>        <!-- Compugraphic Foundry -->
+        <word caseSensitive="1">COM</word>        <!-- Linotype Communication Font Line -->
+        <word caseSensitive="1">FB</word>        <!-- Font Bureau Foundry -->
+        <word caseSensitive="1">FF</word>        <!-- FontFont Foundry -->
+        <word caseSensitive="1">ICG</word>        <!-- Image Club Graphics Foundry -->
+        <word caseSensitive="1">LET</word>        <!-- Letraset Foundry-->
+        <word caseSensitive="1">MT</word>        <!-- Monotype Foundry -->
+        <word separate="1">ITC</word>        <!-- International Typeface Corporation -->
+        <word separate="1">ITC</word>        <!-- Lanston Type Co. Foundry -->
+        <word separate="1">SSK</word>        <!-- SoftKey Foundry -->
+        <word separate="1">URW</word>        <!-- URW Foundry-->
+        <word match="(?&lt;!\p{Lu})(OTF?)" caseSensitive="1">$1</word>        <!-- OpenType -->
+        <word match="(?&lt;!\p{Lu})(TTF?)" caseSensitive="1">$1</word>        <!-- TrueType -->
+        <word match="(?&lt;!\p{Lu})PS" caseSensitive="1">PS</word>        <!-- PostScript -->
+        <word separate="1">OpenType</word>
+        <word separate="1">TrueType</word>
+        <word match="C[Yy][Rr](illic)?" replace="Cyrillic">Cyrillic</word>
+        <word match="(Uni(?:code)?)" caseSensitive="1">$1</word>
+        <word caseSensitive="1">SUBH</word> <!-- Subhead -->
+        <word match="(?&lt;!\w)T(?!\w)" caseSensitive="1">T</word>        <!-- Text -->
+        <word match="(?&lt;!\w)T(?!\w)" caseSensitive="1">D</word>        <!-- Display -->
+        <word match="Std|STD" caseSensitive="1">Std</word>        <!-- Standard -->
+        <word match="Pro|PRO" caseSensitive="1">Pro</word>        <!-- Professional -->
+        <word>Expert</word>
+        <word>Roman</word>
+        <word>Gothic</word>
+        <word>Sans</word>
+        <word>Serif</word>
+        <!-- font variants -->
+        <word onlyLast="1" caseSensitive="1">A</word>
+        <word onlyLast="1" caseSensitive="1">B</word>
+        <word onlyLast="1" caseSensitive="1">C</word>
+        <word onlyLast="1" caseSensitive="1">E</word>
+        <word onlyLast="1" caseSensitive="1">F</word>
     </familyWords>
 </fontWords>
