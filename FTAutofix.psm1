@@ -203,7 +203,7 @@ filter FixFont {
       $isMatch = if ($_.match -and $styleWords -cmatch "^$($_.match)`$") {
         $styleWords = $styleWords -creplace "^$($_.match)`$", $_.'#text' # a bit wasteful doing the matching twice, but style words of this configuration are rare at the time of writing
         $true
-      } elseif (0 -le ($i = [Array]::FindIndex($styleWords, [Predicate[string]] {param($word) $word -eq $_.'#text'}))) {
+      } elseif (!$_.match -and 0 -le ($i = [Array]::FindIndex($styleWords, [Predicate[string]] {param($word) $word -eq $_.'#text'}))) {
         $styleWords[$i] = $_.'#text'
         $true
       }
